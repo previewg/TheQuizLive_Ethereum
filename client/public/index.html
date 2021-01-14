@@ -3,12 +3,40 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Ethereum quiz app"
     />
     <title>Quiz</title>
+    <style>
+      @font-face {
+        font-family: 'Apple';
+        font-style: normal;
+        src: url('fonts/AppleSDGothicNeoL.ttf');
+      }
+      @font-face {
+        font-family: 'SCDream';
+        font-style: normal;
+        src: url('fonts/SCDream3.otf');
+      }
+      @font-face {
+        font-family: 'Kcc';
+        font-style: normal;
+        src: url('fonts/KCC-eunyoung.ttf');
+      }
+      body,textarea,input,button
+      {
+        -webkit-font-smoothing: antialiased;
+        font-family: 'Apple',sans-serif !important;
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+      }
+      a {
+        text-decoration: none;
+        color: black;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

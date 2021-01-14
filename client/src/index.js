@@ -11,6 +11,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 // Pages
 import { Home } from "pages";
+import { NavBar } from "components";
 
 // Common components
 
@@ -24,6 +25,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
+      <NavBar />
       <Switch>
         <Route exact path="/" component={Home} />
       </Switch>

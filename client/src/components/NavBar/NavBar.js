@@ -3,48 +3,55 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const NavBarStyle = styled.nav`
-  .navbar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 20px;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    border-bottom: solid 0.2mm gray;
-  }
-  .navbar__title {
-    font-size: 35px;
-    background: -webkit-linear-gradient(180deg, #fcb5b5, rgb(241, 43, 69));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  width: 100%;
+  height: 60px;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  position: sticky;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  top: 0;
+  left: 0;
+
+  .title {
+    font-family: Kcc;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: rgba(241, 43, 69, 0.747);
+    cursor: pointer;
   }
 
-  .navbar__menu {
+  .menu {
     display: flex;
+    justify-self: center;
     justify-content: space-around;
     width: 70%;
-    padding-left: 0;
-  }
-  .navbar__menu div {
-    text-decoration: none;
-    padding: 8px;
-    font-size: 20px;
-    transition: ease-in-out 250ms;
-  }
-  .navbar__menu div a {
-    color: black;
   }
 
-  .navbar__menu div:hover {
-    transform: scale(1.3);
-  }
-
-  .navbar__signIn {
-    font-size: 20px;
+  .sign__in {
+    justify-self: center;
+    font-size: 1rem;
     transition: ease-in-out 400ms;
+    width: 80px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    color: rgb(241, 43, 69);
+    :hover {
+      background-color: rgba(241, 43, 69, 0.747);
+      color: white;
+    }
+  }
+
+  .sign__out {
+    justify-self: center;
+    font-size: 1rem;
+    transition: 0.2s ease-in-out;
     width: 80px;
     height: 40px;
     border-radius: 10%;
@@ -53,54 +60,43 @@ const NavBarStyle = styled.nav`
     align-items: center;
     border: solid 0.1mm rgb(241, 43, 69);
     color: rgb(241, 43, 69);
-  }
 
-  .navbar__signIn:hover {
-    background-color: rgba(241, 43, 69, 0.747);
-    color: white;
-  }
-
-  .curtime {
-    background-color: white;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    font-size: 30px;
-    position: fixed;
-    top: 20px;
-    padding: 20px;
-  }
-
-  @media screen and (max-width: 620px) {
-    .navbar {
-      margin-top: 8px;
-      padding: 8px 12px;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .navbar__menu {
-      flex-direction: column;
-      width: 100%;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    .navbar__menu div {
-      width: 100%;
-      text-align: center;
-      padding: 8px 24px;
-    }
-    .navbar__signIn {
-      width: 100%;
-      text-align: center;
-      border-radius: 1mm;
+    :hover {
+      background-color: rgba(241, 43, 69, 0.747);
+      color: white;
     }
   }
+
+  //@media screen and (max-width: 620px) {
+  //  .navbar {
+  //    margin-top: 8px;
+  //    padding: 8px 12px;
+  //    flex-direction: column;
+  //    align-items: flex-start;
+  //  }
+  //
+  //  .navbar__menu {
+  //    flex-direction: column;
+  //    width: 100%;
+  //    align-items: center;
+  //    overflow: hidden;
+  //  }
+  //
+  //  .navbar__menu div {
+  //    width: 100%;
+  //    text-align: center;
+  //    padding: 8px 24px;
+  //  }
+  //  .navbar__signIn {
+  //    width: 100%;
+  //    text-align: center;
+  //    border-radius: 1mm;
+  //  }
+  //}
 `;
 
 function NavBar() {
-  const [isSigned, setIsSigned] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const onClickHandler = (e) => {
     e.preventDefault();
@@ -118,12 +114,10 @@ function NavBar() {
 
   return (
     <NavBarStyle>
-      <div className="navbar__logo">
-        <Link to="/" className="navbar__title">
-          The Live Quiz
-        </Link>
-      </div>
-      <div className="navbar__menu">
+      <Link to="/" className="title">
+        The Quiz Live
+      </Link>
+      <div className="menu">
         <div>
           <Link to="/">HOME</Link>
         </div>
@@ -134,13 +128,15 @@ function NavBar() {
           <Link to="/info"> INFO</Link>
         </div>
       </div>
-      <Link to="/signIn" className="navbar__signIn">
-        SignIn
-      </Link>
-
-      <Link onClick={onClickHandler} to="#" className="navbar__signIn">
-        SignOut
-      </Link>
+      {isSignedIn ? (
+        <Link onClick={onClickHandler} to="#" className="sign__out">
+          로그아웃
+        </Link>
+      ) : (
+        <Link to="/signIn" className="sign__in">
+          로그인
+        </Link>
+      )}
     </NavBarStyle>
   );
 }
