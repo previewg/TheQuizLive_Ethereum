@@ -56,7 +56,7 @@ const HomeStyle = styled.section`
 `;
 
 const Home = (props) => {
-  const [dDay, setDDay] = useState(new Date("2021/01/14/16:12:40"));
+  const [dDay, setDDay] = useState(new Date("2021/01/15/16:12:40"));
   const [date, setDate] = useState({
     hours: "0",
     minutes: "0",

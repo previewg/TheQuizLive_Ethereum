@@ -10,7 +10,7 @@ import ReduxThunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 // Pages
-import { Home } from "pages";
+import { Home, About, SignIn, SignUp } from "pages";
 import { NavBar } from "components";
 
 // Common components
@@ -28,6 +28,9 @@ ReactDOM.render(
       <NavBar />
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path="/about" component={About} />
+        <Route exact path="/signIn" component={SignIn} />
+        <Route exact path="/signUp" component={SignUp} />
       </Switch>
     </BrowserRouter>
   </Provider>,

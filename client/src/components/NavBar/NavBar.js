@@ -22,6 +22,7 @@ const NavBarStyle = styled.nav`
     font-weight: 600;
     color: rgba(241, 43, 69, 0.747);
     cursor: pointer;
+    min-width: 200px;
   }
 
   .menu {
