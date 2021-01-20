@@ -3,10 +3,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const smtpTransporter = require("nodemailer-smtp-transport");
-const nodemailer = require("nodemailer");
 const crypto = require("crypto");
-const server = require("../app");
+const server = require("../server");
 const axios = require("axios");
 
 const { User, Email_confirm } = require("../models");

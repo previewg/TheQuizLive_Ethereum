@@ -10,7 +10,7 @@ const NavBarStyle = styled.nav`
   justify-content: space-around;
   align-items: center;
   background-color: white;
-  position: sticky;
+  position: fixed;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   top: 0;
   left: 0;
@@ -42,11 +42,8 @@ const NavBarStyle = styled.nav`
     justify-content: center;
     align-items: center;
     border-radius: 5px;
-    color: rgb(241, 43, 69);
-    :hover {
-      background-color: rgba(241, 43, 69, 0.747);
-      color: white;
-    }
+    color: white;
+    background-color: rgba(241, 43, 69, 0.747);
   }
 
   .sign__out {
