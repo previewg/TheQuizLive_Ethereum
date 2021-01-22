@@ -9,45 +9,21 @@ const SignUpStyle = styled.section`
   align-items: center;
 
   .layout {
-    width: 20%;
+    width: 400px;
 
     p {
       margin-bottom: 10px;
     }
 
-    strong {
-      color: rgb(241, 43, 69);
-    }
-
     input {
-      width: 100%;
-      height: 40px;
-      border: none;
-      border-bottom: 0.1px solid lightgray;
-      padding: 0;
-      margin-bottom: 25px;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .id__input {
-      width: 100%;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-
-      input {
-        width: 70%;
-      }
-
-      button {
-        cursor: pointer;
-        width: 80px;
-        height: 40px;
-        background: none;
-        color: rgb(241, 43, 69);
-        border: solid 0.1px rgb(241, 43, 69);
-        border-radius: 5px;
-      }
+      width: 368px;
+      height: 56px;
+      font-size: 1rem;
+      border: 0.1px solid lightgray;
+      border-radius: 10px;
+      padding-left: 16px;
+      padding-right: 16px;
+      outline-color: rgba(241, 43, 69, 0.5);
     }
 
     #true {
@@ -95,9 +71,11 @@ const SignUpStyle = styled.section`
 
 const errorMsg = [
   "",
-  "이메일을 입력 바랍니다",
-  "비밀번호를 입력 바랍니다",
-  "아이디 혹은 비밀번호가 일치하지 않습니다",
+  "아이디가 누락되었습니다",
+  "암호가 누락되었습니다",
+  "아이디가 이미 존재합니다",
+  "암호는 특수문자 포함, 8자리 이상입니다",
+  "암호와 일치하지 않습니다.",
 ];
 
 const SignUp = (props) => {
@@ -157,40 +135,29 @@ const SignUp = (props) => {
   return (
     <SignUpStyle password={user.password} passwordCheck={user.passwordCheck}>
       <div className="layout">
-        <p>
-          <strong>▶ </strong>아이디
-        </p>
-        <div className="id__input">
-          <input
-            id="id"
-            onChange={onChangeHandler}
-            value={user.id}
-            placeholder="아이디를 입력하세요"
-          />
-          <button>중복확인</button>
-        </div>
-        <p>
-          <strong>▶ </strong>비밀번호<span id="true">일치</span>
-          <span id="false">불일치</span>
-        </p>
+        <input
+          id="id"
+          onChange={onChangeHandler}
+          value={user.id}
+          placeholder="아이디"
+        />
+        <p className="id__err">{errorMsg[1]}</p>
         <input
           id="password"
           onChange={onChangeHandler}
           value={user.password}
-          placeholder="비밀번호를 입력하세요"
+          placeholder="암호"
           type="password"
         />
-        <p>
-          <strong>▶ </strong>비밀번호확인<span id="true">일치</span>
-          <span id="false">불일치</span>
-        </p>
+        <p className="pw__err">{errorMsg[2]}</p>
         <input
           id="passwordCheck"
           onChange={onChangeHandler}
           value={user.passwordCheck}
-          placeholder="비밀번호를 다시 한 번 입력하세요"
+          placeholder="암호확인"
           type="password"
         />
+        <p className="pwCheck__err">{errorMsg[3]}</p>
         <div className="buttons">
           <button>가입하기</button>
           <button onClick={cancel}>취소</button>

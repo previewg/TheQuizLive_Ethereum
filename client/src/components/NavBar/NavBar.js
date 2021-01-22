@@ -16,7 +16,7 @@ const NavBarStyle = styled.nav`
   left: 0;
 
   .title {
-    font-family: Kcc;
+    font-family: Kcc !important;
     text-align: center;
     font-size: 2.5rem;
     font-weight: 600;

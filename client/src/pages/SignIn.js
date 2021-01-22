@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const SignInStyle = styled.section`
   width: 100%;
@@ -9,57 +10,89 @@ const SignInStyle = styled.section`
   align-items: center;
 
   .layout {
-    width: 20%;
-    p {
-      margin-bottom: 10px;
-    }
+    width: 400px;
+
     strong {
-      color: rgb(241, 43, 69);
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 60px;
     }
 
     input {
+      width: 368px;
+      height: 56px;
+      font-size: 1rem;
+      border: 0.1px solid lightgray;
+      border-radius: 10px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #id {
+      border: 0.1px solid
+        ${(props) =>
+          props.errorCode == 1 || props.errorCode == 2
+            ? "rgb(241, 43, 69)"
+            : "lightgray"};
+      ::placeholder {
+        color: ${(props) =>
+          props.errorCode == 1 || props.errorCode == 2
+            ? "rgb(241, 43, 69)"
+            : "gray"};
+      }
+    }
+
+    #pw {
+      border: 0.1px solid
+        ${(props) =>
+          props.errorCode == 1 || props.errorCode == 3
+            ? "rgb(241, 43, 69)"
+            : "lightgray"};
+      ::placeholder {
+        color: ${(props) =>
+          props.errorCode == 1 || props.errorCode == 3
+            ? "rgb(241, 43, 69)"
+            : "gray"};
+      }
+    }
+
+    .id__err {
+      visibility: ${(props) =>
+        props.errorCode == 1 || props.errorCode == 2 ? "visible" : "hidden"};
+      color: red;
+      padding-left: 16px;
+      font-size: 0.8rem;
+    }
+
+    .pw__err {
+      visibility: ${(props) =>
+        props.errorCode == 1 || props.errorCode == 3 ? "visible" : "hidden"};
+      color: red;
+      padding-left: 16px;
+      font-size: 0.8rem;
+    }
+
+    button {
       width: 100%;
-      height: 40px;
+      height: 60px;
+      font-size: 1rem;
+      background-color: rgba(241, 43, 69, 0.5);
       border: none;
-      border-bottom: 0.1px solid lightgray;
-      padding: 0;
-      margin-bottom: 25px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin-top: 30px;
     }
 
-    .id__input {
-      width: 100%;
+    .suggestion {
+      margin-top: 20px;
+      height: 60px;
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      input {
-        width: 70%;
-      }
-
-      button {
-        cursor: pointer;
-        width: 80px;
-        height: 40px;
-        background: none;
-        color: rgb(241, 43, 69);
-        border: solid 0.1px rgb(241, 43, 69);
-        border-radius: 5px;
-      }
-    }
-    .buttons {
-      width: 100%;
-      display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
-      margin-top: 50px;
-      button {
-        width: 45%;
-        height: 45px;
-        font-size: 1rem;
-        background-color: rgba(241, 43, 69, 0.5);
-        border: none;
-        border-radius: 5px;
-        color: white;
-        cursor: pointer;
+      color: gray;
+      span {
+        color: rgb(241, 43, 69);
       }
     }
   }
@@ -67,21 +100,19 @@ const SignInStyle = styled.section`
 
 const errorMsg = [
   "",
-  "이메일을 입력 바랍니다",
-  "비밀번호를 입력 바랍니다",
+  "아이디가 누락되었습니다",
+  "암호가 누락되었습니다",
   "아이디 혹은 비밀번호가 일치하지 않습니다",
 ];
 
 const SignIn = (props) => {
   const [user, setUser] = useState({
     id: "",
-    password: "",
-    passwordCheck: "",
+    pw: "",
   });
 
   const id = useRef();
-  const password = useRef();
-  const passwordCheck = useRef();
+  const pw = useRef();
 
   const [errorCode, setErrorCode] = useState(0);
 
@@ -90,81 +121,65 @@ const SignIn = (props) => {
       ...user,
       [e.target.id]: e.target.value,
     });
-    setErrorCode(0);
+    if (errorCode === 1) {
+      if (e.target.id === "id") setErrorCode(3);
+      else setErrorCode(2);
+    } else if (errorCode === 2) {
+      if (e.target.id === "id") setErrorCode(0);
+    } else {
+      if (e.target.id === "pw") setErrorCode(0);
+    }
     if (e.key === "Enter") {
       signInHandler();
     }
   };
 
-  const errorHandler = () => () => {
-    if (!user.id) {
+  const errorHandler = () => {
+    if (!user.id && !user.pw) {
       setErrorCode(1);
       id.current.focus();
-      return false;
-    } else if (!user.password) {
+    } else if (!user.id) {
       setErrorCode(2);
-      password.current.focus();
+      id.current.focus();
       return false;
-    } else if (!user.passwordCheck) {
+    } else if (!user.pw) {
       setErrorCode(3);
-      passwordCheck.current.focus();
+      pw.current.focus();
       return false;
     }
     return true;
   };
 
   const signInHandler = () => {
-    if (errorHandler) {
+    if (errorHandler()) {
     }
   };
 
-  const cancel = () => {
-    setUser({
-      id: "",
-      password: "",
-      passwordCheck: "",
-    });
-  };
-
   return (
-    <SignInStyle>
+    <SignInStyle errorCode={errorCode}>
       <div className="layout">
-        <p>
-          <strong>▶ </strong>아이디
-        </p>
-        <div className="id__input">
-          <input
-            id="id"
-            onChange={onChangeHandler}
-            value={user.id}
-            placeholder="아이디를 입력하세요"
-          />
-          <button>중복확인</button>
-        </div>
-        <p>
-          <strong>▶ </strong>비밀번호
-        </p>
+        <strong>로그인.</strong>
         <input
-          id="password"
+          id="id"
+          ref={id}
           onChange={onChangeHandler}
-          value={user.password}
-          placeholder="비밀번호를 입력하세요"
+          value={user.id}
+          placeholder="아이디"
+        />
+        <p className="id__err">{errorMsg[1]}</p>
+        <input
+          id="pw"
+          ref={pw}
+          onChange={onChangeHandler}
+          value={user.pw}
+          placeholder="암호"
           type="password"
         />
-        <p>
-          <strong>▶ </strong>비밀번호확인
-        </p>
-        <input
-          id="passwordCheck"
-          onChange={onChangeHandler}
-          value={user.passwordCheck}
-          placeholder="비밀번호를 다시 한 번 입력하세요"
-          type="password"
-        />
-        <div className="buttons">
-          <button>로그인</button>
-          <button onClick={cancel}>취소</button>
-        </div>
+        <p className="pw__err">{errorMsg[2]}</p>
+        <button onClick={signInHandler}>로그인</button>
+        <Link to="/signUp" className="suggestion">
+          아이디가 없으신가요?<span> 지금 생성.</span>
+        </Link>
       </div>
     </SignInStyle>
   );
