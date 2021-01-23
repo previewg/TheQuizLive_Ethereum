@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled from "styled-components";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import axios from "axios";
+import { signInFailure, signInSuccess } from "../actions/auth";
 
 const SignInStyle = styled.section`
   width: 100%;
@@ -31,12 +34,12 @@ const SignInStyle = styled.section`
     #id {
       border: 0.1px solid
         ${(props) =>
-          props.errorCode == 1 || props.errorCode == 2
+          props.errorCode === 1 || props.errorCode === 2
             ? "rgb(241, 43, 69)"
             : "lightgray"};
       ::placeholder {
         color: ${(props) =>
-          props.errorCode == 1 || props.errorCode == 2
+          props.errorCode === 1 || props.errorCode === 2
             ? "rgb(241, 43, 69)"
             : "gray"};
       }
@@ -45,12 +48,12 @@ const SignInStyle = styled.section`
     #pw {
       border: 0.1px solid
         ${(props) =>
-          props.errorCode == 1 || props.errorCode == 3
+          props.errorCode === 1 || props.errorCode === 3
             ? "rgb(241, 43, 69)"
             : "lightgray"};
       ::placeholder {
         color: ${(props) =>
-          props.errorCode == 1 || props.errorCode == 3
+          props.errorCode === 1 || props.errorCode === 3
             ? "rgb(241, 43, 69)"
             : "gray"};
       }
@@ -58,7 +61,7 @@ const SignInStyle = styled.section`
 
     .id__err {
       visibility: ${(props) =>
-        props.errorCode == 1 || props.errorCode == 2 ? "visible" : "hidden"};
+        props.errorCode === 1 || props.errorCode === 2 ? "visible" : "hidden"};
       color: red;
       padding-left: 16px;
       font-size: 0.8rem;
@@ -66,7 +69,7 @@ const SignInStyle = styled.section`
 
     .pw__err {
       visibility: ${(props) =>
-        props.errorCode == 1 || props.errorCode == 3 ? "visible" : "hidden"};
+        props.errorCode === 1 || props.errorCode === 3 ? "visible" : "hidden"};
       color: red;
       padding-left: 16px;
       font-size: 0.8rem;
@@ -98,23 +101,19 @@ const SignInStyle = styled.section`
   }
 `;
 
-const errorMsg = [
-  "",
-  "아이디가 누락되었습니다",
-  "암호가 누락되었습니다",
-  "아이디 혹은 비밀번호가 일치하지 않습니다",
-];
+const errorMsg = ["", "아이디가 누락되었습니다", "암호가 누락되었습니다"];
 
 const SignIn = (props) => {
   const [user, setUser] = useState({
     id: "",
     pw: "",
   });
+  const [errorCode, setErrorCode] = useState(0);
 
   const id = useRef();
   const pw = useRef();
 
-  const [errorCode, setErrorCode] = useState(0);
+  const dispatch = useDispatch();
 
   const onChangeHandler = (e) => {
     setUser({
@@ -150,8 +149,18 @@ const SignIn = (props) => {
     return true;
   };
 
-  const signInHandler = () => {
+  const signInHandler = async () => {
     if (errorHandler()) {
+      await axios
+        .post("/auth/signIn", { ...user })
+        .then((response) => {
+          if (response.data.success === 1) {
+            dispatch(signInSuccess(response.data));
+          }
+        })
+        .catch((error) => {
+          dispatch(signInFailure(error.response.data.code));
+        });
     }
   };
 

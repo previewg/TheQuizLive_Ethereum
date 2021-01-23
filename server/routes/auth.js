@@ -4,10 +4,9 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const server = require("../server");
 const axios = require("axios");
 
-const { User, Email_confirm } = require("../models");
+const { User } = require("../models");
 
 // 특수문자 제거
 const regExp = (str) => {
@@ -20,153 +19,39 @@ const regExp = (str) => {
 };
 
 // 회원가입
-router.post("/signup", async (req, res) => {
-  const { email, nickname, password } = req.body;
-  let regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-  let regPassword = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^*()\-_=+\\\|\[\]{};:\'",.<>\/?]).{9,}$/i;
+router.post("/signUp", async (req, res) => {
+  const { uid, unn, upw } = req.body;
+  let regPassword = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^*()\-_=+\\\|\[\]{};:\'",.<>\/?]).{8,}$/i;
 
   try {
-    const exUser = await User.findOne({ where: { email } });
-    const exNick = await User.findOne({ where: { nickname } });
+    const dupCheck = await User.findOne({ where: { uid } });
 
-    // 이메일 중복
-    if (exUser) {
-      return res.json({
-        success: 2,
-        code: 0,
-      });
-    }
-
-    // 이메일 형식 오류
-    if (!regEmail.test(req.body.email)) {
+    // 아이디 중복 확인
+    if (dupCheck) {
       return res.json({
         success: 2,
         code: 1,
       });
     }
 
-    // 닉네임 중복
-    if (exNick) {
+    // 암호 형식 오류
+    if (!regPassword.test(upw)) {
       return res.json({
         success: 2,
         code: 2,
       });
     }
 
-    // 비밀번호 형식 오류
-    if (!regPassword.test(req.body.password)) {
-      return res.json({
-        success: 2,
-        code: 3,
-      });
-    }
-
-    const hash = await bcrypt.hash(password, 12);
-
-    await crypto.randomBytes(8, (err, buf) => {
-      crypto.pbkdf2(
-        email,
-        buf.toString("base64"),
-        100000,
-        8,
-        "sha512",
-        async (err, key) => {
-          let hashedEmail = key.toString("base64");
-          hashedEmail = regExp(hashedEmail);
-          await axios.post(`${process.env.FABRIC_URL}/auth/enroll/user`, {
-            user_id: hashedEmail,
-          });
-          await User.create({
-            email,
-            nickname,
-            password: hash,
-            hash: hashedEmail,
-          });
-        }
-      );
+    const hashedPw = await bcrypt.hash(upw, 12);
+    await User.create({
+      uid,
+      unn,
+      upw: hashedPw,
     });
-    return res.status(200).json({ success: 1 });
+    return res.json({ success: 1 });
   } catch (err) {
     console.error(err);
     return res.status(400).json({ success: 3 });
-  }
-});
-
-router.post("/requestEmail", async (req, res) => {
-  const key_one = crypto.randomBytes(256).toString("hex").substr(100, 5);
-  const key_two = crypto.randomBytes(256).toString("base64").substr(50, 5);
-  const key_for_verify = key_one + key_two;
-  const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-
-  const email = req.body.email;
-  const smtpTransport = nodemailer.createTransport(
-    smtpTransporter({
-      service: "Gmail",
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "yh9407@gmail.com",
-        pass: "nazgbplzumjbaozs",
-      },
-    })
-  );
-
-  const url = `http://127.0.0.1:3000/auth/confirmEmail/${key_for_verify}`;
-
-  try {
-    if (regEmail.test(req.body.email)) {
-      await Email_confirm.create({
-        email: email,
-        key_for_verify: key_for_verify,
-      });
-      setTimeout(function () {
-        Email_confirm.destroy({ where: { email: email } });
-      }, 180000);
-    }
-    let mailOpt = {
-      from: "yh9407@gmail.com",
-      to: email,
-      subject: "이메일 인증을 진행해주세요 - HUGUS",
-      html: "<h2>아래의 링크를 클릭하여 인증을 진행해주세요 !</h2>" + url,
-    };
-
-    await smtpTransport.sendMail(mailOpt, function (err, res) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("email has been sent.");
-      }
-      smtpTransport.close();
-    });
-    res.status(200).json({ success: 1 });
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-router.get("/confirmEmail/:key", async (req, res) => {
-  try {
-    const data = await Email_confirm.findOne({
-      where: { key_for_verify: req.params.key },
-    });
-    if (data) {
-      const email = data.getDataValue("email");
-      server.emit(email, "SUCCESS");
-      await Email_confirm.destroy({
-        where: { key_for_verify: req.params.key },
-      });
-
-      res.send(
-        "<script type=\"text/javascript\">alert(\"인증이 성공적으로 완료되었습니다. 회원가입을 이어서 진행해주세요.\");window.open('','_self').close();</script>"
-      );
-    } else {
-      res.send(
-        "<script type=\"text/javascript\">alert(\"인증기한이 만료되었습니다. 이메일 인증을 다시 진행해주세요.\");window.open('','_self').close();</script>"
-      );
-    }
-  } catch (error) {
-    console.log(error);
   }
 });
 
@@ -253,180 +138,6 @@ router.post("/destroy", async (req, res, next) => {
     console.error(error);
     res.status(400).json({ success: 3 });
   }
-});
-
-// 회원비밀번호 재확인
-router.post("/confirm", async (req, res) => {
-  const { nickname, password } = req.body;
-  const user = await User.findOne({ where: { nickname } });
-  if (user) {
-    const isMatched = await bcrypt.compare(password, user.password);
-    if (isMatched) {
-      return res.json({ success: 1 });
-    } else {
-      res.json({ success: 2 });
-    }
-  } else {
-    res.status(400).json({ success: 3 });
-  }
-});
-
-//카카오 로그인
-router.post("/kakao", async (req, res) => {
-  let email = req.body.id + "@kakao.com";
-  if (req.body.kakao_account.email) email = req.body.kakao_account.email;
-  let nickname = req.body.kakao_account.profile.nickname;
-  let user_profile = req.body.kakao_account.profile.profile_image_url;
-  const password = await bcrypt.hash(`${req.body.id}`, 12);
-  let hash = "";
-  const user = await User.findOne({
-    where: {
-      email: email,
-    },
-  });
-
-  if (user) {
-    user_profile = user.getDataValue("user_profile");
-    nickname = user.getDataValue("nickname");
-    hash = user.getDataValue("hash");
-  } else {
-    crypto.randomBytes(8, (err, buf) => {
-      crypto.pbkdf2(
-        email,
-        buf.toString("base64"),
-        100000,
-        8,
-        "sha512",
-        async (err, key) => {
-          hash = key.toString("base64");
-          hash = regExp(hash);
-          await axios.post(`${process.env.FABRIC_URL}/auth/enroll/user`, {
-            user_id: hash,
-          });
-          await User.create({
-            email: email,
-            nickname: nickname,
-            user_profile: user_profile,
-            password: password,
-            hash: hash,
-          });
-        }
-      );
-    });
-  }
-
-  let session = req.session;
-  session.loginInfo = {
-    user_email: email,
-    user_nickname: nickname,
-    user_hash: hash,
-  };
-
-  const payload = {
-    email: email,
-    nickname: nickname,
-    profile: user_profile,
-    social: "kakao",
-    hash_email: hash,
-  };
-
-  jwt.sign(
-    payload,
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "24h",
-    },
-    (err, token) => {
-      res.cookie("hugus", token);
-      res.json({
-        success: 1,
-        nickname: nickname,
-        profile: user_profile,
-        email: email,
-        social: "kakao",
-        hash_email: hash,
-      });
-    }
-  );
-});
-
-//네이버 로그인
-router.post("/naver", async (req, res) => {
-  const { email, nickname, profile } = req.body;
-  const password = await bcrypt.hash(email, 12);
-  let hash = "";
-  let user_profile = "";
-  let user_nickname = "";
-  const user = await User.findOne({
-    where: {
-      email: email,
-    },
-  });
-
-  if (user) {
-    user_profile = user.getDataValue("user_profile");
-    user_nickname = user.getDataValue("nickname");
-    hash = user.getDataValue("hash");
-  } else {
-    crypto.randomBytes(8, (err, buf) => {
-      crypto.pbkdf2(
-        email,
-        buf.toString("base64"),
-        100000,
-        8,
-        "sha512",
-        async (err, key) => {
-          hash = key.toString("base64");
-          hash = regExp(hash);
-          await axios.post(`${process.env.FABRIC_URL}/auth/enroll/user`, {
-            user_id: hash,
-          });
-          await User.create({
-            email: email,
-            nickname: nickname,
-            user_profile: profile,
-            password: password,
-            hash: hash,
-          });
-        }
-      );
-    });
-    user_profile = profile;
-    user_nickname = nickname;
-  }
-
-  let session = req.session;
-  session.loginInfo = {
-    user_email: email,
-    user_nickname: user_nickname,
-    user_hash: hash,
-  };
-
-  const payload = {
-    email: email,
-    nickname: user_nickname,
-    profile: user_profile,
-    social: "naver",
-    hash_email: hash,
-  };
-  jwt.sign(
-    payload,
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "24h",
-    },
-    (err, token) => {
-      res.cookie("hugus", token);
-      res.json({
-        success: 1,
-        nickname: user_nickname,
-        profile: user_profile,
-        email: email,
-        social: "naver",
-        hash_email: hash,
-      });
-    }
-  );
 });
 
 module.exports = router;
