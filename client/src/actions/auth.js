@@ -27,14 +27,11 @@ export const signInSuccess = (data) => {
     data: data,
   };
 };
-export const signInFailure = (error) => {
-  return { type: AUTH_SIGNIN_FAILURE, error: error };
+export const signInFailure = () => {
+  return { type: AUTH_SIGNIN_FAILURE };
 };
 
 // 로그아웃
-export const signOutStart = () => {
-  return { type: AUTH_SIGNOUT };
-};
 export const signOutSuccess = () => {
   return { type: AUTH_SIGNOUT_SUCCESS };
 };
@@ -51,19 +48,6 @@ export const signDestroySuccess = () => {
 };
 export const signDestroyFailure = () => {
   return { type: AUTH_SIGN_DESTROY_FAILURE };
-};
-
-// 로그아웃 요청
-export const signOutRequest = () => async (dispatch) => {
-  dispatch(signOutStart());
-  await axios
-    .post("/auth/signOut")
-    .then((response) => {
-      dispatch(signOutSuccess());
-    })
-    .catch((error) => {
-      dispatch(signOutFailure());
-    });
 };
 
 // 회원탈퇴요청

@@ -61,57 +61,38 @@ export default function auth(state = initialState, action) {
     // 로그인
     case AUTH_SIGNIN_SUCCESS:
       return update(state, {
-        signIn: {
-          status: { $set: "SUCCESS" },
+        status: {
+          signIn: { $set: "SUCCESS" },
         },
         user: {
-          isLoggedIn: { $set: true },
-          nickname: { $set: action.data.nickname },
-          profile: { $set: action.data.profile },
-          email: { $set: action.data.email },
-          hash_email: { $set: action.data.hash_email },
-          phone_number: { $set: action.data.phone_number },
+          uid: { $set: action.data.uid },
+          unn: { $set: action.data.unn },
         },
       });
     case AUTH_SIGNIN_FAILURE:
       return update(state, {
-        signIn: {
-          status: { $set: "FAILURE" },
+        status: {
+          signIn: { $set: "FAILURE" },
         },
       });
 
     // 로그아웃
-    case AUTH_SIGNOUT:
-      return update(state, {
-        signOut: {
-          status: { $set: "WAITING" },
-        },
-      });
-
     case AUTH_SIGNOUT_SUCCESS:
       return update(state, {
-        signIn: {
-          status: { $set: "INIT" },
+        status: {
+          signIn: { $set: "INIT" },
+          signOut: { $set: "SUCCESS" },
         },
         user: {
-          isLoggedIn: { $set: false },
-          nickname: { $set: "" },
-          profile: { $set: "" },
-          email: { $set: "" },
-          hash_email: { $set: "" },
-        },
-        profileChange: {
-          status: { $set: "INIT" },
-        },
-        signOut: {
-          status: { $set: "SUCCESS" },
+          uid: { $set: "" },
+          unn: { $set: "" },
         },
       });
 
     case AUTH_SIGNOUT_FAILURE:
       return update(state, {
-        signOut: {
-          status: { $set: "FAILURE" },
+        status: {
+          signOut: { $set: "FAILURE" },
         },
       });
 

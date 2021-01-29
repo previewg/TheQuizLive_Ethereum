@@ -133,8 +133,6 @@ const SignUp = (props) => {
     upw__err: false,
   });
 
-  console.log(error);
-
   const uid = useRef();
   const unn = useRef();
   const upw = useRef();
@@ -207,12 +205,12 @@ const SignUp = (props) => {
 
   const signUpHandler = async () => {
     if (errorHandler()) {
-      const result = await axios.post("/auth/signUp", { ...user });
-      if (result.data.success === 1) {
+      const res = await axios.post("/auth/signUp", { ...user });
+      if (res.data.success === 1) {
         alert("회원가입이 완료되었습니다.");
         props.history.push("/signIn");
-      } else if (result.data.success === 2) {
-        switch (result.data.code) {
+      } else if (res.data.success === 2) {
+        switch (res.data.code) {
           case 1:
             setError({ ...error, uid__err: true });
           case 2:

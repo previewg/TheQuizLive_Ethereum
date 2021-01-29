@@ -20,6 +20,7 @@
     "dotenv": "^8.2.0",
     "ethereumjs-tx": "^2.1.2",
     "express": "^4.17.1",
+    "express-mysql-session": "^2.1.5",
     "express-session": "^1.17.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",

@@ -31,45 +31,38 @@ const SignInStyle = styled.section`
       padding-right: 16px;
     }
 
-    #id {
-      border: 0.1px solid
-        ${(props) =>
-          props.errorCode === 1 || props.errorCode === 2
-            ? "rgb(241, 43, 69)"
-            : "lightgray"};
-      ::placeholder {
-        color: ${(props) =>
-          props.errorCode === 1 || props.errorCode === 2
-            ? "rgb(241, 43, 69)"
-            : "gray"};
-      }
+    #uid {
+      margin-bottom: ${(props) =>
+        props.error.uid__empty || props.error.uid__err ? "0px" : "20px"};
+    }
+    #upw {
+      margin-bottom: ${(props) =>
+        props.error.upw__empty || props.error.upw__err ? "0px" : "20px"};
     }
 
-    #pw {
-      border: 0.1px solid
-        ${(props) =>
-          props.errorCode === 1 || props.errorCode === 3
-            ? "rgb(241, 43, 69)"
-            : "lightgray"};
-      ::placeholder {
-        color: ${(props) =>
-          props.errorCode === 1 || props.errorCode === 3
-            ? "rgb(241, 43, 69)"
-            : "gray"};
-      }
-    }
-
-    .id__err {
-      visibility: ${(props) =>
-        props.errorCode === 1 || props.errorCode === 2 ? "visible" : "hidden"};
+    .uid__empty {
+      display: ${(props) => (props.error.uid__empty ? "block" : "none")};
       color: red;
       padding-left: 16px;
       font-size: 0.8rem;
     }
 
-    .pw__err {
-      visibility: ${(props) =>
-        props.errorCode === 1 || props.errorCode === 3 ? "visible" : "hidden"};
+    .uid__err {
+      display: ${(props) => (props.error.uid__err ? "block" : "none")};
+      color: red;
+      padding-left: 16px;
+      font-size: 0.8rem;
+    }
+
+    .upw__empty {
+      display: ${(props) => (props.error.upw__empty ? "block" : "none")};
+      color: red;
+      padding-left: 16px;
+      font-size: 0.8rem;
+    }
+
+    .upw__err {
+      display: ${(props) => (props.error.upw__err ? "block" : "none")};
       color: red;
       padding-left: 16px;
       font-size: 0.8rem;
@@ -101,17 +94,28 @@ const SignInStyle = styled.section`
   }
 `;
 
-const errorMsg = ["", "아이디가 누락되었습니다", "암호가 누락되었습니다"];
+const errorMsg = {
+  uid__empty: "아이디가 누락되었습니다",
+  upw__empty: "암호가 누락되었습니다",
+  uid__err: "아이디가 존재하지 않습니다",
+  upw__err: "암호가 일치하지 않습니다",
+};
 
 const SignIn = (props) => {
   const [user, setUser] = useState({
-    id: "",
-    pw: "",
+    uid: "",
+    upw: "",
   });
-  const [errorCode, setErrorCode] = useState(0);
 
-  const id = useRef();
-  const pw = useRef();
+  const [error, setError] = useState({
+    uid__empty: false,
+    upw__empty: false,
+    uid__err: false,
+    upw__err: false,
+  });
+
+  const uid = useRef();
+  const upw = useRef();
 
   const dispatch = useDispatch();
 
@@ -120,30 +124,40 @@ const SignIn = (props) => {
       ...user,
       [e.target.id]: e.target.value,
     });
-    if (errorCode === 1) {
-      if (e.target.id === "id") setErrorCode(3);
-      else setErrorCode(2);
-    } else if (errorCode === 2) {
-      if (e.target.id === "id") setErrorCode(0);
-    } else {
-      if (e.target.id === "pw") setErrorCode(0);
+
+    if (e.target.id === "uid")
+      setError({ ...error, uid__empty: false, uid__err: false });
+    else {
+      setError({
+        ...error,
+        upw__empty: false,
+        upw__err: false,
+      });
     }
+
     if (e.key === "Enter") {
       signInHandler();
     }
   };
 
   const errorHandler = () => {
-    if (!user.id && !user.pw) {
-      setErrorCode(1);
-      id.current.focus();
-    } else if (!user.id) {
-      setErrorCode(2);
-      id.current.focus();
-      return false;
-    } else if (!user.pw) {
-      setErrorCode(3);
-      pw.current.focus();
+    let errorCaused = [];
+    let errorChanged = {};
+
+    if (!user.uid) {
+      errorChanged = { ...errorChanged, uid__empty: true };
+      errorCaused.push(1);
+    }
+
+    if (!user.upw) {
+      errorChanged = { ...errorChanged, upw__empty: true };
+      errorCaused.push(2);
+    }
+
+    setError({ ...error, ...errorChanged });
+    if (errorCaused.length !== 0) {
+      if (errorCaused.includes(1)) uid.current.focus();
+      else if (errorCaused.includes(2)) upw.current.focus();
       return false;
     }
     return true;
@@ -151,40 +165,49 @@ const SignIn = (props) => {
 
   const signInHandler = async () => {
     if (errorHandler()) {
-      await axios
-        .post("/auth/signIn", { ...user })
-        .then((response) => {
-          if (response.data.success === 1) {
-            dispatch(signInSuccess(response.data));
-          }
-        })
-        .catch((error) => {
-          dispatch(signInFailure(error.response.data.code));
-        });
+      const res = await axios.post("/auth/signIn", { ...user });
+      if (res.data.success === 1) {
+        dispatch(signInSuccess(res.data));
+        props.history.push("/");
+      } else if (res.data.success === 3) {
+        if (res.data.code === 1) {
+          setError({
+            ...error,
+            uid__err: true,
+          });
+        } else {
+          setError({
+            ...error,
+            upw__err: true,
+          });
+        }
+        dispatch(signInFailure());
+      }
     }
   };
-
   return (
-    <SignInStyle errorCode={errorCode}>
+    <SignInStyle error={error}>
       <div className="layout">
         <strong>로그인.</strong>
         <input
-          id="id"
-          ref={id}
+          id="uid"
+          ref={uid}
           onChange={onChangeHandler}
-          value={user.id}
+          value={user.uid}
           placeholder="아이디"
         />
-        <p className="id__err">{errorMsg[1]}</p>
+        <p className="uid__empty">{errorMsg.uid__empty}</p>
+        <p className="uid__err">{errorMsg.uid__err}</p>
         <input
-          id="pw"
-          ref={pw}
+          id="upw"
+          ref={upw}
           onChange={onChangeHandler}
-          value={user.pw}
+          value={user.upw}
           placeholder="암호"
           type="password"
         />
-        <p className="pw__err">{errorMsg[2]}</p>
+        <p className="upw__empty">{errorMsg.upw__empty}</p>
+        <p className="upw__err">{errorMsg.upw__err}</p>
         <button onClick={signInHandler}>로그인</button>
         <Link to="/signUp" className="suggestion">
           아이디가 없으신가요?<span> 지금 생성.</span>

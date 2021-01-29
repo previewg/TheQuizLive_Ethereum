@@ -6,7 +6,13 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const axios = require("axios");
 
+// Models
 const { User } = require("../models");
+
+// web3 Settings
+const Web3 = require("web3");
+const Accounts = require("web3-eth-accounts");
+const hp3 = new Web3(new Web3.providers.HttpProvider(process.env.URL));
 
 // 특수문자 제거
 const regExp = (str) => {
@@ -26,7 +32,6 @@ router.post("/signUp", async (req, res) => {
   try {
     const dupCheck = await User.findOne({ where: { uid } });
 
-    // 아이디 중복 확인
     if (dupCheck) {
       return res.json({
         success: 2,
@@ -34,7 +39,6 @@ router.post("/signUp", async (req, res) => {
       });
     }
 
-    // 암호 형식 오류
     if (!regPassword.test(upw)) {
       return res.json({
         success: 2,
@@ -57,64 +61,61 @@ router.post("/signUp", async (req, res) => {
 
 // 로그인
 router.post("/signIn", async (req, res) => {
-  const { email, password } = req.body;
-
-  await User.findOne({ where: { email } }).then((user) => {
+  const { uid, upw } = req.body;
+  let session = req.session;
+  try {
+    const user = await User.findOne({ where: { uid } });
     if (!user) {
-      return res.status(400).json({
+      return res.json({
         success: 2,
+        code: 1,
       });
     }
 
-    bcrypt.compare(password, user.password).then((isMatched) => {
-      if (isMatched) {
-        let session = req.session;
-        session.loginInfo = {
-          user_email: user.email,
-          user_nickname: user.nickname,
-          user_hash: user.hash,
-        };
-        const payload = {
-          nickname: user.nickname,
-          profile: user.user_profile,
-          email: user.email,
-          hash_email: user.hash,
-        };
-        jwt.sign(
-          payload,
-          process.env.JWT_SECRET,
-          {
-            //token 지속시간
-            expiresIn: "24h",
-          },
-          (err, token) => {
-            // res.cookie(key,value) cookie에 key값을 넣는 방식
-            res.cookie("hugus", token);
-            res.json({
-              success: 1,
-              nickname: user.nickname,
-              profile: user.user_profile,
-              email: user.email,
-              hash_email: user.hash,
-              phone_number: user.phone_number,
-            });
-          }
-        );
-      } else {
-        return res.status(400).json({ success: 2 });
+    const isMatched = await bcrypt.compare(upw, user.upw);
+    if (!isMatched) return res.json({ success: 2, code: 2 });
+
+    session.loginInfo = {
+      uid: user.uid,
+      unn: user.unn,
+    };
+
+    const payload = {
+      uid: user.uid,
+      unn: user.unn,
+    };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
+      },
+      (err, token) => {
+        res.cookie("quiz", token);
+        res.json({
+          success: 1,
+          uid: user.uid,
+          unn: user.unn,
+        });
       }
-    });
-  });
+    );
+  } catch (error) {
+    res.status(400).json({ success: 3 });
+  }
 });
 
 // 로그아웃
-router.post("/signOut", (req, res) => {
+router.post("/signOut", async (req, res) => {
   let store = req.sessionStore;
-  store.destroy((err) => {
-    if (err) throw err;
-  });
-  res.clearCookie("hugus");
-  return res.json({ success: 1 });
+  try {
+    // await store.destroy((err) => {
+    //   if (err) throw err;
+    // });
+    res.clearCookie("quiz");
+    return res.json({ success: 1 });
+  } catch (error) {
+    res.status(400).json({ success: 3 });
+  }
 });
 
 // 회원탈퇴

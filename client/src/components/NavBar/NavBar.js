@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
+import { signOutSuccess, signOutFailure } from "../../actions/auth";
 
 const NavBarStyle = styled.nav`
   width: 100%;
@@ -47,21 +50,25 @@ const NavBarStyle = styled.nav`
   }
 
   .sign__out {
-    justify-self: center;
-    font-size: 1rem;
-    transition: 0.2s ease-in-out;
-    width: 80px;
-    height: 40px;
-    border-radius: 10%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    border: solid 0.1mm rgb(241, 43, 69);
-    color: rgb(241, 43, 69);
-
-    :hover {
-      background-color: rgba(241, 43, 69, 0.747);
-      color: white;
+    .sign__out__btn {
+      justify-self: center;
+      cursor: pointer;
+      background: none;
+      font-size: 1rem;
+      transition: 0.2s ease-in-out;
+      width: 80px;
+      height: 40px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: solid 0.1mm rgb(241, 43, 69);
+      color: rgb(241, 43, 69);
+      :hover {
+        background-color: rgba(241, 43, 69, 0.747);
+        color: white;
+      }
     }
   }
 
@@ -94,20 +101,16 @@ const NavBarStyle = styled.nav`
 `;
 
 function NavBar() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const dispatch = useDispatch();
 
-  const onClickHandler = (e) => {
-    e.preventDefault();
-    // dispatch(signOut()).then((response) => {
-    //   if (response.payload.success) {
-    //     setIsSigned(false);
-    //     document.cookie =
-    //       "x_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    //     alert("로그아웃이 완료되었습니다.");
-    //   } else {
-    //     alert("로그아웃에 실패했습니다");
-    //   }
-    // });
+  const isSignedIn = useSelector((state) => state.auth.status.signIn);
+  const unn = useSelector((state) => state.auth.user.unn);
+
+  const signOutHandler = async (e) => {
+    const res = await axios.post("/auth/signOut");
+    console.log(res);
+    if (res.data.success === 1) dispatch(signOutSuccess());
+    else if (res.data.success === 2) dispatch(signOutFailure());
   };
 
   return (
@@ -126,10 +129,13 @@ function NavBar() {
           <Link to="/info"> INFO</Link>
         </div>
       </div>
-      {isSignedIn ? (
-        <Link onClick={onClickHandler} to="#" className="sign__out">
-          로그아웃
-        </Link>
+      {isSignedIn === "SUCCESS" ? (
+        <div className="sign__out">
+          <span>{unn}</span>
+          <button onClick={signOutHandler} className="sign__out__btn">
+            로그아웃
+          </button>
+        </div>
       ) : (
         <Link to="/signIn" className="sign__in">
           로그인

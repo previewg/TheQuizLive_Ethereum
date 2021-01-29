@@ -1,7 +1,8 @@
 const express = require("express");
-const session = require("express-session");
 const path = require("path");
 const models = require("./models");
+const session = require("express-session");
+const mysqlStore = require("express-mysql-session")(session);
 
 require("dotenv").config();
 require("cors")();
@@ -12,7 +13,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// socket 설정
+// session settings
+const env = process.env.NODE_ENV || "development";
+const config = require("./config/config.json")[env];
+let sessionStore = new mysqlStore({
+  host: config.host,
+  port: config.port,
+  user: config.username,
+  password: config.password,
+  database: config.database,
+});
+app.use(
+  session({
+    key: "quiz",
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// socket settings
 const io = require("socket.io");
 const server = io.listen(3333);
 server.on("connection", function (socket) {
