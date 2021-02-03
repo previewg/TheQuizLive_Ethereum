@@ -9,10 +9,30 @@ const axios = require("axios");
 // Models
 const { User } = require("../models");
 
+// liveQuiz.json
+const liveQuiz = require("../build/contracts/LiveQuiz.json");
+
 // web3 Settings
 const Web3 = require("web3");
 const Accounts = require("web3-eth-accounts");
-const hp3 = new Web3(new Web3.providers.HttpProvider(process.env.URL));
+let web3 = new Web3(Web3.givenProvider || process.env.URL);
+let accounts = new Accounts(process.env.URL);
+
+let meta;
+let rootAccount;
+
+async function init() {
+  try {
+    let result = await web3.eth.net.getId();
+    let deployedNetwork = liveQuiz.networks[result];
+    meta = new web3.eth.Contract(liveQuiz.abi, deployedNetwork.address);
+    let list = await web3.eth.getAccounts();
+    rootAccount = list[0];
+  } catch (err) {
+    console.error("Could not connect to contract or chain. error => " + err);
+  }
+}
+init();
 
 // 특수문자 제거
 const regExp = (str) => {
@@ -47,11 +67,33 @@ router.post("/signUp", async (req, res) => {
     }
 
     const hashedPw = await bcrypt.hash(upw, 12);
+
+    let userAccount = await accounts.create();
+    console.log(rootAccount);
+    let userPbk = userAccount.address;
+    let userPvk = userAccount.privateKey;
+
+    const { transfer } = meta.methods;
+    await transfer(userPbk, 100).send({ from: rootAccount });
+
+    await web3.eth
+      .sendTransaction({
+        from: rootAccount,
+        to: userPbk,
+        value: 1000000000000000000,
+      })
+      .on("receipt", function (receipt) {
+        console.log("give 1eth successfully");
+      });
+
     await User.create({
       uid,
       unn,
       upw: hashedPw,
+      upbk: userPbk,
+      upvk: userPvk,
     });
+
     return res.json({ success: 1 });
   } catch (err) {
     console.error(err);

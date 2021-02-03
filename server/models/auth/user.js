@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      upbk: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      upvk: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       tableName: "user",

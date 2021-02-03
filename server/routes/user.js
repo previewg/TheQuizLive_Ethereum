@@ -1,8 +1,8 @@
-// quizmaster.json
-const SimpleToken = require("../build/contracts/SimpleToken.json");
-
 const express = require("express");
 const router = express.Router();
+
+// quizmaster.json
+const SimpleToken = require("../build/contracts/SimpleToken.json");
 
 // jwt 설정
 const jwt = require("jsonwebtoken");
@@ -15,24 +15,23 @@ const conn = mysql.createConnection(config);
 // web3설정
 const Web3 = require("web3");
 const Accounts = require("web3-eth-accounts");
-const url = "http://127.0.0.1:8545";
-const hp3 = new Web3(new Web3.providers.HttpProvider(url));
+let web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
 let meta;
 let rootAccount;
 
 async function init() {
-  await hp3.eth.net.getId((err, result) => {
+  await web3.eth.net.getId((err, result) => {
     if (err) console.error("Could not connect to contract or chain.");
     const deployedNetwork = SimpleToken.networks[result];
-    const _meta = new hp3.eth.Contract(
+    const _meta = new web3.eth.Contract(
       SimpleToken.abi,
       deployedNetwork.address
     );
     meta = _meta;
   });
 
-  await hp3.eth.getAccounts((err, result) => {
+  await web3.eth.getAccounts((err, result) => {
     if (err) console.error("Could not connect to contract or chain.");
     rootAccount = result[0];
   });
@@ -64,7 +63,7 @@ router.post("/signUp", async (req, res, next) => {
   const { transfer } = meta.methods;
   await transfer(userpbk, 100).send({ from: rootAccount });
 
-  await hp3.eth
+  await web3.eth
     .sendTransaction(
       {
         from: rootAccount,

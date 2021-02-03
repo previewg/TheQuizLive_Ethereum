@@ -1,5 +1,5 @@
-const SimpleToken = artifacts.require('SimpleToken')
+const LiveQuiz = artifacts.require("LiveQuiz");
 
 module.exports = function (deployer) {
-  deployer.deploy(SimpleToken)
-}
+  deployer.deploy(LiveQuiz);
+};
