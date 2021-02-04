@@ -55,11 +55,11 @@ models.sequelize
 
 // Register Routers
 const authRouter = require("./routes/auth");
-// const quizRouter = require("./routes/quiz");
+const quizRouter = require("./routes/quiz");
 
 // Use Routers
 app.use("/auth", authRouter);
-// app.use("/quiz", quizRouter);
+app.use("/quiz", quizRouter);
 
 // 404 처리
 app.use((req, res) => {

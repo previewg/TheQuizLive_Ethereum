@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { BalanceChecker } from "components";
 
 const HomeStyle = styled.section`
   width: 100%;
@@ -56,6 +58,7 @@ const HomeStyle = styled.section`
 `;
 
 const Home = (props) => {
+  const isSignedIn = useSelector((state) => state.auth.status.signIn);
   const [dDay, setDDay] = useState(new Date("2021/01/15/16:12:40"));
   const [date, setDate] = useState({
     hours: "0",
@@ -63,6 +66,11 @@ const Home = (props) => {
     seconds: "0",
     isValid: false,
   });
+
+  const quizStart = () => {
+    if (isSignedIn === "SUCCESS") props.history.push("/quiz");
+    else props.history.push("/signIn");
+  };
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -112,15 +120,13 @@ const Home = (props) => {
       ) : (
         <div className="time">
           <p className="title">지금 바로 참여하세요!</p>
-          <button
-            className="question__btn"
-            onClick={() => props.history.push("/quiz/random")}
-          >
+          <button className="question__btn" onClick={quizStart}>
             퀴즈풀기!
           </button>
         </div>
       )}
       <div className="background__black"></div>
+      <BalanceChecker />
     </HomeStyle>
   );
 };

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 // Pages
-import { Home, About, SignIn, SignUp } from "pages";
+import { Home, About, SignIn, SignUp, Quiz } from "pages";
 
 // Common components
 import { NavBar } from "components";
@@ -31,6 +31,7 @@ ReactDOM.render(
         <Route exact path="/about" component={About} />
         <Route exact path="/signIn" component={SignIn} />
         <Route exact path="/signUp" component={SignUp} />
+        <Route exact path="/quiz" component={Quiz} />
       </Switch>
     </BrowserRouter>
   </Provider>,

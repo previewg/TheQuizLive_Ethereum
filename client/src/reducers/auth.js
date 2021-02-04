@@ -35,11 +35,12 @@ function parseJwt(token) {
 
 const initialState = {
   user: {
-    uid: parseJwt(getCookie("quiz")).uid || "",
-    unn: parseJwt(getCookie("quiz")).unn || "",
+    uid: parseJwt(getCookie("liveQuiz")).uid || "",
+    unn: parseJwt(getCookie("liveQuiz")).unn || "",
+    upbk: parseJwt(getCookie("liveQuiz")).upbk || "",
   },
   status: {
-    signIn: "INIT",
+    signIn: (getCookie("liveQuiz") && "SUCCESS") || "INIT",
     signUp: "INIT",
     signOut: "INIT",
     signDestroy: "INIT",
@@ -67,6 +68,7 @@ export default function auth(state = initialState, action) {
         user: {
           uid: { $set: action.data.uid },
           unn: { $set: action.data.unn },
+          upbk: { $set: action.data.upbk },
         },
       });
     case AUTH_SIGNIN_FAILURE:
@@ -86,6 +88,7 @@ export default function auth(state = initialState, action) {
         user: {
           uid: { $set: "" },
           unn: { $set: "" },
+          upbk: { $set: "" },
         },
       });
 

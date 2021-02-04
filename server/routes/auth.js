@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const axios = require("axios");
 
 // Models
@@ -69,7 +68,6 @@ router.post("/signUp", async (req, res) => {
     const hashedPw = await bcrypt.hash(upw, 12);
 
     let userAccount = await accounts.create();
-    console.log(rootAccount);
     let userPbk = userAccount.address;
     let userPvk = userAccount.privateKey;
 
@@ -120,11 +118,13 @@ router.post("/signIn", async (req, res) => {
     session.loginInfo = {
       uid: user.uid,
       unn: user.unn,
+      upbk: user.upbk,
     };
 
     const payload = {
       uid: user.uid,
       unn: user.unn,
+      upbk: user.upbk,
     };
     jwt.sign(
       payload,
@@ -133,11 +133,12 @@ router.post("/signIn", async (req, res) => {
         expiresIn: "24h",
       },
       (err, token) => {
-        res.cookie("quiz", token);
+        res.cookie("liveQuiz", token);
         res.json({
           success: 1,
           uid: user.uid,
           unn: user.unn,
+          upbk: user.upbk,
         });
       }
     );
@@ -150,10 +151,8 @@ router.post("/signIn", async (req, res) => {
 router.post("/signOut", async (req, res) => {
   let store = req.sessionStore;
   try {
-    // await store.destroy((err) => {
-    //   if (err) throw err;
-    // });
-    res.clearCookie("quiz");
+    await store.destroy();
+    res.clearCookie("liveQuiz");
     return res.json({ success: 1 });
   } catch (error) {
     res.status(400).json({ success: 3 });
@@ -161,16 +160,13 @@ router.post("/signOut", async (req, res) => {
 });
 
 // 회원탈퇴
-router.post("/destroy", async (req, res, next) => {
-  const { email } = req.body;
+router.post("/destroy", async (req, res) => {
+  const { uid } = req.body;
   let store = req.sessionStore;
-
   try {
-    store.destroy((err) => {
-      if (err) throw err;
-    });
-    res.clearCookie("hugus");
-    const user = await User.findOne({ where: { email } });
+    await store.destroy();
+    res.clearCookie("liveQuiz");
+    const user = await User.findOne({ where: { uid } });
 
     await axios.post(`${process.env.FABRIC_URL}/auth/delete`, {
       user_id: user.getDataValue("hash"),
@@ -181,6 +177,21 @@ router.post("/destroy", async (req, res, next) => {
     console.error(error);
     res.status(400).json({ success: 3 });
   }
+});
+
+router.get("/userInfo", (req, res) => {
+  const { uid } = req.body;
+});
+
+router.get("/list", (req, res, next) => {
+  let sql = "SELECT userid,useremail,userpbk FROM user WHERE userid!='admin'";
+  conn.query(sql, function (err, result, fields) {
+    if (!err) {
+      res.status(200).json({ list: result });
+    } else {
+      res.status(400).json(err);
+    }
+  });
 });
 
 module.exports = router;

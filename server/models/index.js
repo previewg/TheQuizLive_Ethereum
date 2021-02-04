@@ -14,7 +14,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-//Auth
-db.User = require("./auth/user")(sequelize, Sequelize);
+db.User = require("./user")(sequelize, Sequelize);
+db.Quiz = require("./quiz")(sequelize, Sequelize);
 
 module.exports = db;
