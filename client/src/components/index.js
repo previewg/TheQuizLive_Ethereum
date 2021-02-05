@@ -1,4 +1,4 @@
 import NavBar from "./NavBar/NavBar";
-import BalanceChecker from "./Home/BalanceChecker";
+import BalanceCheck from "./Home/BalanceCheck";
 
-export { NavBar, BalanceChecker };
+export { NavBar, BalanceCheck };

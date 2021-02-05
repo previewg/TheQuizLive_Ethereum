@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { BalanceChecker } from "components";
+import { BalanceCheck } from "components";
 
 const HomeStyle = styled.section`
   width: 100%;
@@ -17,7 +17,7 @@ const HomeStyle = styled.section`
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
-    z-index: -1;
+    z-index: ${(props) => (props.isValid ? 0 : -1)};
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
   }
 
@@ -59,6 +59,7 @@ const HomeStyle = styled.section`
 
 const Home = (props) => {
   const isSignedIn = useSelector((state) => state.auth.status.signIn);
+  const [open, setOpen] = useState(false);
   const [dDay, setDDay] = useState(new Date("2021/01/15/16:12:40"));
   const [date, setDate] = useState({
     hours: "0",
@@ -68,7 +69,7 @@ const Home = (props) => {
   });
 
   const quizStart = () => {
-    if (isSignedIn === "SUCCESS") props.history.push("/quiz");
+    if (isSignedIn === "SUCCESS") setOpen(true);
     else props.history.push("/signIn");
   };
 
@@ -126,7 +127,7 @@ const Home = (props) => {
         </div>
       )}
       <div className="background__black"></div>
-      <BalanceChecker />
+      {open && <BalanceCheck setOpen={setOpen} />}
     </HomeStyle>
   );
 };

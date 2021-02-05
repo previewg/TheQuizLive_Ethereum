@@ -6,7 +6,7 @@ let config = require("../config/mariadb_config.js");
 let conn = mysql.createConnection(config); // db접속
 
 // Models
-const { Quiz, sequelize } = require("../models");
+const { User, Quiz, sequelize } = require("../models");
 
 // liveQuiz.json
 const liveQuiz = require("../build/contracts/LiveQuiz.json");
@@ -34,7 +34,8 @@ async function init() {
 }
 init();
 
-router.post("/balanceCheck", async (req, res, next) => {
+// balanceCheck
+router.get("/check", async (req, res, next) => {
   const { uid } = req.session.loginInfo;
   try {
     let user = await User.findOne({ where: { uid } });
@@ -42,9 +43,8 @@ router.post("/balanceCheck", async (req, res, next) => {
 
     const { balanceOf } = meta.methods;
     const balance = await balanceOf(upbk).call();
-    console.log(balance);
-    if (balance < 10) return res.json({ success: 2 });
-    return res.json({ success: 1 });
+    if (balance < 10) return res.json({ success: 2, balance: balance });
+    return res.json({ success: 1, balance: balance });
   } catch (error) {
     res.status(400).json({ success: 3 });
   }

@@ -101,7 +101,7 @@ const errorMsg = {
   upw__err: "암호가 일치하지 않습니다",
 };
 
-const SignIn = (props) => {
+const SignIn = ({ push }) => {
   const [user, setUser] = useState({
     uid: "",
     upw: "",
@@ -168,7 +168,7 @@ const SignIn = (props) => {
       const res = await axios.post("/auth/signIn", { ...user });
       if (res.data.success === 1) {
         dispatch(signInSuccess(res.data));
-        props.history.push("/");
+        push("/");
       } else if (res.data.success === 3) {
         if (res.data.code === 1) {
           setError({

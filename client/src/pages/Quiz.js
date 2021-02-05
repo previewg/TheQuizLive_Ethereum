@@ -44,7 +44,7 @@ const QuizStyle = styled.section`
   }
 `;
 
-const Quiz = (props) => {
+const Quiz = ({ push }) => {
   const [answer, setAnswer] = useState(0);
   const [quiz, setQuiz] = useState({
     id: "",

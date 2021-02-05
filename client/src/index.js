@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 // Pages
-import { Home, About, SignIn, SignUp, Quiz } from "pages";
+import { Home, About, SignIn, SignUp, Quiz, RestrictedRoute } from "pages";
 
 // Common components
 import { NavBar } from "components";
@@ -29,9 +29,26 @@ ReactDOM.render(
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/about" component={About} />
-        <Route exact path="/signIn" component={SignIn} />
-        <Route exact path="/signUp" component={SignUp} />
-        <Route exact path="/quiz" component={Quiz} />
+        <RestrictedRoute
+          exact
+          path="/signIn"
+          component={SignIn}
+          fallback={Home}
+        />
+        <RestrictedRoute
+          exact
+          path="/signUp"
+          component={SignUp}
+          fallback={Home}
+        />
+        <RestrictedRoute
+          exact
+          path="/quiz"
+          component={Quiz}
+          fallback={SignIn}
+          subFallback={Home}
+        />
+        <Redirect to="/" />
       </Switch>
     </BrowserRouter>
   </Provider>,

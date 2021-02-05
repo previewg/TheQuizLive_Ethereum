@@ -116,7 +116,7 @@ const errorMsg = {
   upw__err: "암호는 숫자,특수문자 포함하여 8자리 이상입니다",
 };
 
-const SignUp = (props) => {
+const SignUp = ({ push }) => {
   const [user, setUser] = useState({
     uid: "",
     unn: "",
@@ -208,7 +208,7 @@ const SignUp = (props) => {
       const res = await axios.post("/auth/signUp", { ...user });
       if (res.data.success === 1) {
         alert("회원가입이 완료되었습니다.");
-        props.history.push("/signIn");
+        push("/signIn");
       } else if (res.data.success === 2) {
         switch (res.data.code) {
           case 1:

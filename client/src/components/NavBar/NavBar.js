@@ -17,6 +17,7 @@ const NavBarStyle = styled.nav`
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   top: 0;
   left: 0;
+  z-index: 1;
 
   .title {
     font-family: Kcc !important;
@@ -108,7 +109,6 @@ function NavBar() {
 
   const signOutHandler = async (e) => {
     const res = await axios.post("/auth/signOut");
-    console.log(res);
     if (res.data.success === 1) dispatch(signOutSuccess());
     else if (res.data.success === 2) dispatch(signOutFailure());
   };
