@@ -210,7 +210,7 @@ const SignIn = ({ push }) => {
         <p className="upw__err">{errorMsg.upw__err}</p>
         <button onClick={signInHandler}>로그인</button>
         <Link to="/signUp" className="suggestion">
-          아이디가 없으신가요?<span> 지금 생성.</span>
+          아이디가 없으신가요?<span> 지금 생성</span>
         </Link>
       </div>
     </SignInStyle>

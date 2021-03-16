@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { balanceCheckSuccess } from "actions/quiz";
+import {
+  balanceCheckFailure,
+  balanceCheckSuccess,
+  entranceFeeFailure,
+  entranceFeeSuccess,
+} from "actions/quiz";
 
 const BalanceCheckStyle = styled.section`
   position: fixed;
@@ -56,16 +61,31 @@ const BalanceCheckStyle = styled.section`
   }
 `;
 
-const BalanceCheck = ({ setOpen }) => {
+const LoaderStyle = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const BalanceCheck = ({ setOpen, ...props }) => {
   const dispatch = useDispatch();
   const [balance, setBalance] = useState(0);
+
+  const pay = async () => {
+    const res = await axios.post("/quiz/pay");
+    if (res.data.success === 1) {
+      dispatch(entranceFeeSuccess());
+      props.history.push("/quiz");
+    } else dispatch(entranceFeeFailure());
+  };
 
   useEffect(async () => {
     const res = await axios.get("/quiz/check");
     if (res.data.success === 1) {
       setBalance(res.data.balance);
       dispatch(balanceCheckSuccess());
-    }
+    } else dispatch(balanceCheckFailure());
   }, []);
 
   return (
@@ -81,7 +101,9 @@ const BalanceCheck = ({ setOpen }) => {
         <p id="caution">
           🔥도전시, <strong>10토큰</strong>이 소모됩니다🔥
         </p>
-        <button id="start__btn">도전</button>
+        <button id="start__btn" onClick={pay}>
+          도전
+        </button>
       </div>
     </BalanceCheckStyle>
   );

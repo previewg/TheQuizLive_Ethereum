@@ -46,7 +46,6 @@ ReactDOM.render(
           path="/quiz"
           component={Quiz}
           fallback={SignIn}
-          subFallback={Home}
         />
         <Redirect to="/" />
       </Switch>

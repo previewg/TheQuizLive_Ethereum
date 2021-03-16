@@ -52,6 +52,12 @@ const NavBarStyle = styled.nav`
 
   .sign__out {
     display: flex;
+    #username {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+    }
     .sign__out__btn {
       justify-self: center;
       cursor: pointer;
@@ -131,7 +137,7 @@ function NavBar() {
       </div>
       {isSignedIn === "SUCCESS" ? (
         <div className="sign__out">
-          <span>{unn}</span>
+          <span id="username">{unn}님</span>
           <button onClick={signOutHandler} className="sign__out__btn">
             로그아웃
           </button>

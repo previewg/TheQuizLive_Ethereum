@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -45,9 +45,11 @@ const QuizStyle = styled.section`
 `;
 
 const Quiz = ({ push }) => {
+  const id_ref = useRef(0);
+  const answer_ref = useRef(0);
   const [answer, setAnswer] = useState(0);
   const [quiz, setQuiz] = useState({
-    id: "",
+    id: 0,
     category: "",
     question: "",
     choice1: "",
@@ -57,8 +59,9 @@ const Quiz = ({ push }) => {
   });
 
   useEffect(async () => {
-    const res = await axios.get("/quiz/start");
+    const res = await axios.get("/quiz/random");
     if (res.data.success === 1) {
+      id_ref.current = res.data.quiz[0].id;
       let data = res.data.quiz[0];
       setQuiz({
         id: data.id,
@@ -70,20 +73,23 @@ const Quiz = ({ push }) => {
         choice4: data.choice4,
       });
     }
+    const submit = setTimeout(async () => {
+      const res = await axios.post("/quiz/submit", {
+        id: id_ref.current,
+        answer: String(answer_ref.current),
+      });
+      if (res.data.success === 1) {
+        alert("정답입니다");
+      }
+    }, 10000);
 
-    const timer = () => {
-      setTimeout(async () => {
-        await axios
-          .post("/quiz/submit", { id: quiz.id, answer: String(answer) })
-          .then((result) => {
-            console.log(result);
-          });
-      }, 10000);
-    };
-    timer();
-
-    return () => clearTimeout(timer);
+    return () => clearTimeout(submit);
   }, []);
+
+  const answerHandler = (answer) => {
+    setAnswer(answer);
+    answer_ref.current = answer;
+  };
 
   return (
     <QuizStyle answer={answer}>
@@ -91,16 +97,16 @@ const Quiz = ({ push }) => {
         <p id="category">&lt;{quiz.category}&gt;</p>
         <p id="question">👉 {quiz.question}</p>
         <div className="choices">
-          <button id="choice1" onClick={() => setAnswer(1)}>
+          <button id="choice1" onClick={() => answerHandler(1)}>
             {quiz.choice1}
           </button>
-          <button id="choice2" onClick={() => setAnswer(2)}>
+          <button id="choice2" onClick={() => answerHandler(2)}>
             {quiz.choice2}
           </button>
-          <button id="choice3" onClick={() => setAnswer(3)}>
+          <button id="choice3" onClick={() => answerHandler(3)}>
             {quiz.choice3}
           </button>
-          <button id="choice4" onClick={() => setAnswer(4)}>
+          <button id="choice4" onClick={() => answerHandler(4)}>
             {quiz.choice4}
           </button>
         </div>

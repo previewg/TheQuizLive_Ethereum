@@ -59,6 +59,7 @@ const HomeStyle = styled.section`
 
 const Home = (props) => {
   const isSignedIn = useSelector((state) => state.auth.status.signIn);
+  const isPaid = useSelector((state) => state.quiz.status.isPaid);
   const [open, setOpen] = useState(false);
   const [dDay, setDDay] = useState(new Date("2021/01/15/16:12:40"));
   const [date, setDate] = useState({
@@ -69,6 +70,7 @@ const Home = (props) => {
   });
 
   const quizStart = () => {
+    if (isPaid === "SUCCESS") props.history.push("/quiz");
     if (isSignedIn === "SUCCESS") setOpen(true);
     else props.history.push("/signIn");
   };
@@ -127,7 +129,7 @@ const Home = (props) => {
         </div>
       )}
       <div className="background__black"></div>
-      {open && <BalanceCheck setOpen={setOpen} />}
+      {open && <BalanceCheck setOpen={setOpen} {...props} />}
     </HomeStyle>
   );
 };

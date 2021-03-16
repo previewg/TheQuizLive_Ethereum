@@ -9,7 +9,7 @@ const AboutStyle = styled.section`
   align-items: center;
 
   .layout {
-    margin-top: 100px;
+    margin-top: 200px;
     width: 50%;
     .head {
       font-size: 2.5rem;
