@@ -169,7 +169,7 @@ const SignIn = ({ push }) => {
       if (res.data.success === 1) {
         dispatch(signInSuccess(res.data));
         push("/");
-      } else if (res.data.success === 3) {
+      } else if (res.data.success === 2) {
         if (res.data.code === 1) {
           setError({
             ...error,

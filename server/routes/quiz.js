@@ -29,7 +29,7 @@ async function init() {
     let list = await web3.eth.getAccounts();
     rootAccount = list[0];
   } catch (err) {
-    console.error("Could not connect to contract or chain. error => " + err);
+    console.error("cannot connect to contract or chain. error => " + err);
   }
 }
 init();

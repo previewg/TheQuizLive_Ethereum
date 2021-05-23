@@ -50,7 +50,6 @@ router.post("/signUp", async (req, res) => {
 
   try {
     const dupCheck = await User.findOne({ where: { uid } });
-
     if (dupCheck) {
       return res.json({
         success: 2,

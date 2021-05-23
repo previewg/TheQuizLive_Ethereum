@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -203,7 +203,7 @@ const SignUp = ({ push }) => {
     return true;
   };
 
-  const signUpHandler = async () => {
+  const signUpHandler = useCallback(async () => {
     if (errorHandler()) {
       const res = await axios.post("/auth/signUp", { ...user });
       if (res.data.success === 1) {
@@ -213,21 +213,22 @@ const SignUp = ({ push }) => {
         switch (res.data.code) {
           case 1:
             setError({ ...error, uid__err: true });
+            break;
           case 2:
             setError({ ...error, upw__err: true });
         }
       }
     }
-  };
+  }, [error]);
 
-  const cancel = () => {
+  const cancel = useCallback(() => {
     setUser({
       uid: "",
       unn: "",
       upw: "",
       upw__check: "",
     });
-  };
+  }, []);
 
   return (
     <SignUpStyle error={error}>
