@@ -1,4 +1,4 @@
-<h1>블록체인 기부 플랫폼 HUGUS</h1>
+<h1>이더리움 기반 퀴즈 플랫폼 The Quiz Live</h1>
 
 <section>
     <article>
