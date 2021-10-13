@@ -19,22 +19,22 @@
 
 ## 💎 기술 스택
 
-###Client
+### Client
 - React.js
 - Redux / Redux-devTools
 - Redux-thunk
 - Axios
 - Styled Components
 
-###Server
+### Server
 - Node.js
 - Express.js
 - Sequelize
 
-###DB
+### DB
 - MariaDB
 
-###Blockchain
+### Blockchain
 - Truffle
 - Ganache
 - Web3.js
@@ -42,15 +42,15 @@
 
 ## 💻 기술 특징
 
-###Authentication
+### Authentication
 - JWT
 - Cookie
 
-###Quiz
+### Quiz
 - Modal
 - Timer
 
-###Blocks
+### Blocks
 - Smart Contract
 - Auto distribution
 
