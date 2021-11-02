@@ -9,5 +9,5 @@
 /server/build
 /server/.env
 /server/test
-
+/server/config/**
 
