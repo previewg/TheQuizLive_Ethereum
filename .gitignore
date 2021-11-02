@@ -1,0 +1,13 @@
+# dependencies
+/server/node_modules
+/client/node_modules
+
+# editor
+.idea
+.vscode
+
+/server/build
+/server/.env
+/server/test
+
+
