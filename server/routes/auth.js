@@ -1,4 +1,5 @@
 "use strict";
+
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -9,7 +10,8 @@ const axios = require("axios");
 const { User } = require("../models");
 
 // liveQuiz.json
-const liveQuiz = require("../build/contracts/LiveQuiz.json");
+
+const TheQuizLive = require("../build/contracts/TheQuizLive.json");
 
 // web3 Settings
 const Web3 = require("web3");
@@ -23,8 +25,8 @@ let rootAccount;
 async function init() {
   try {
     let result = await web3.eth.net.getId();
-    let deployedNetwork = liveQuiz.networks[result];
-    meta = new web3.eth.Contract(liveQuiz.abi, deployedNetwork.address);
+    let deployedNetwork = TheQuizLive.networks[result];
+    meta = new web3.eth.Contract(TheQuizLive.abi, deployedNetwork.address);
     let list = await web3.eth.getAccounts();
     rootAccount = list[0];
   } catch (err) {
@@ -132,7 +134,7 @@ router.post("/signIn", async (req, res) => {
         expiresIn: "24h",
       },
       (err, token) => {
-        res.cookie("liveQuiz", token);
+        res.cookie("TheLiveQuiz", token);
         res.json({
           success: 1,
           uid: user.uid,
@@ -151,7 +153,7 @@ router.post("/signOut", async (req, res) => {
   let store = req.sessionStore;
   try {
     await store.destroy();
-    res.clearCookie("liveQuiz");
+    res.clearCookie("TheLiveQuiz");
     return res.json({ success: 1 });
   } catch (error) {
     res.status(400).json({ success: 3 });
@@ -164,7 +166,7 @@ router.post("/destroy", async (req, res) => {
   let store = req.sessionStore;
   try {
     await store.destroy();
-    res.clearCookie("liveQuiz");
+    res.clearCookie("TheLiveQuiz");
     const user = await User.findOne({ where: { uid } });
 
     await axios.post(`${process.env.FABRIC_URL}/auth/delete`, {

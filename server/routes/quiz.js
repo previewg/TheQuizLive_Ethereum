@@ -9,7 +9,7 @@ let conn = mysql.createConnection(config); // db접속
 const { User, Quiz, History, sequelize } = require("../models");
 
 // liveQuiz.json
-const liveQuiz = require("../build/contracts/LiveQuiz.json");
+const TheQuizLive = require("../build/contracts/TheQuizLive.json");
 
 // web3 Settings
 const Web3 = require("web3");
@@ -23,9 +23,9 @@ let liveQuizAccount;
 async function init() {
   try {
     let result = await web3.eth.net.getId();
-    let deployedNetwork = liveQuiz.networks[result];
+    let deployedNetwork = TheQuizLive.networks[result];
     liveQuizAccount = deployedNetwork.address;
-    meta = new web3.eth.Contract(liveQuiz.abi, deployedNetwork.address);
+    meta = new web3.eth.Contract(TheQuizLive.abi, deployedNetwork.address);
     let list = await web3.eth.getAccounts();
     rootAccount = list[0];
   } catch (err) {

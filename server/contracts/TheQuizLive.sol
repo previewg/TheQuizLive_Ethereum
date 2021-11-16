@@ -3,8 +3,8 @@ pragma solidity >=0.4.21 <0.7.0;
 import "./Context.sol";
 import "./ERC20.sol";
 
-contract LiveQuiz is Context, ERC20 {
-    constructor() public ERC20("TheLiveQuiz", "TLQ") {
+contract TheQuizLive is Context, ERC20 {
+    constructor() public ERC20("TheQuizLive", "TQL") {
         _mint(_msgSender(), 1000000000);
     }
 

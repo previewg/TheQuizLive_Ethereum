@@ -16,6 +16,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // session settings
 const env = process.env.NODE_ENV || "development";
 const config = require("./config/config.json")[env];
+
 let sessionStore = new mysqlStore({
   host: config.host,
   port: config.port,

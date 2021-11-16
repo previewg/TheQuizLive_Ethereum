@@ -1,5 +1,5 @@
-const LiveQuiz = artifacts.require("LiveQuiz");
+const TheQuizLive = artifacts.require("TheQuizLive");
 
 module.exports = function (deployer) {
-  deployer.deploy(LiveQuiz);
+  deployer.deploy(TheQuizLive);
 };
