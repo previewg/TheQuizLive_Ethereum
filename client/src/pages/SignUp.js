@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -116,7 +117,7 @@ const errorMsg = {
   upw__err: "암호는 숫자,특수문자 포함하여 8자리 이상입니다",
 };
 
-const SignUp = ({ push }) => {
+const SignUp = () => {
   const [user, setUser] = useState({
     uid: "",
     unn: "",
@@ -137,6 +138,8 @@ const SignUp = ({ push }) => {
   const unn = useRef();
   const upw = useRef();
   const upw__check = useRef();
+
+  const history = useHistory();
 
   const onChangeHandler = (e) => {
     setUser({
@@ -208,7 +211,7 @@ const SignUp = ({ push }) => {
       const res = await axios.post("/auth/signUp", { ...user });
       if (res.data.success === 1) {
         alert("회원가입이 완료되었습니다.");
-        push("/signIn");
+        history.push("/signIn");
       } else if (res.data.success === 2) {
         switch (res.data.code) {
           case 1:

@@ -47,7 +47,6 @@ ReactDOM.render(
           component={Quiz}
           fallback={SignIn}
         />
-        <Redirect to="/" />
       </Switch>
     </BrowserRouter>
   </Provider>,

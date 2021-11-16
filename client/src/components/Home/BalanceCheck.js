@@ -61,13 +61,6 @@ const BalanceCheckStyle = styled.section`
   }
 `;
 
-const LoaderStyle = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const BalanceCheck = ({ setOpen, ...props }) => {
   const dispatch = useDispatch();
   const [balance, setBalance] = useState(0);

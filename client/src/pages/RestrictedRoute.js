@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import React from "react";
 
 const TRUE = "SUCCESS";
@@ -11,27 +11,26 @@ const RestrictedRoute = ({
 }) => {
   const isSignedIn = useSelector((state) => state.auth.status.signIn);
   const isPaid = useSelector((state) => state.quiz.status.isPaid);
-  const history = useHistory();
 
   switch (path) {
     case "/signIn":
       return isSignedIn !== TRUE ? (
-        <Component push={history.push} />
+        <Component/>
       ) : (
         <Fallback />
       );
     case "/signUp":
       return isSignedIn !== TRUE ? (
-        <Component push={history.push} />
+        <Component/>
       ) : (
         <Fallback />
       );
     case "/quiz":
       if (isSignedIn === TRUE && isPaid === TRUE)
-        return <Component push={history.push} />;
+        return <Component/>;
       else if (isSignedIn !== TRUE) return <Fallback />;
       else if (isPaid !== TRUE) {
-        return <Redirect to="/" />;
+        return <Redirect to="/"/>;
       }
       break;
   }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {useHistory} from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 import { entranceFeeInit, balanceCheckInit } from "../actions/quiz";
 
 const QuizStyle = styled.section`
@@ -48,9 +49,28 @@ const QuizStyle = styled.section`
 
 const TimerStyle = styled.div`
   position: absolute;
+  top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .timerBar {
+    width: 100%;
+    div {
+      height: 10px;
+      background: linear-gradient(90deg, #cc5285, #ecafb5);
+      width: ${(props) => props.time>0 ? (props.time-1) * 10 : 0}%;
+      transition: width 1s linear;
+    }
+  }
+  p{
+    margin: 10px;
+  }
+  
 `;
 
-const Quiz = ({ push }) => {
+const Quiz = () => {
   const id_ref = useRef(0);
   const answer_ref = useRef(0);
   const [answer, setAnswer] = useState(0);
@@ -63,17 +83,14 @@ const Quiz = ({ push }) => {
     choice3: "",
     choice4: "",
   });
-  const [time, setTime] = useState({
-    1: 10,
-    2: 0,
-    3: 0,
-  });
+  const [time, setTime] = useState(11);
   const isPaid = useSelector((state) => state.quiz.status.isPaid);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(async () => {
     if (isPaid) {
-      const res = await axios.get("/quiz/random");
+    const res = await axios.get("/quiz/random");
       if (res.data.success === 1) {
         id_ref.current = res.data.quiz[0].id;
         let data = res.data.quiz[0];
@@ -97,25 +114,21 @@ const Quiz = ({ push }) => {
         } else {
           alert("아쉽게도 정답이 아닙니다ㅠㅠ");
         }
-        push("/info");
-      }, 1000000);
+        history.push("/info");
+      }, 11000);
 
-      const timer1 = setInterval(() => {
-        let before = time["1"];
-        setTime({ ...time, 1: before - 1 });
+      const timer = setInterval(() => {
+        setTime(prevState => prevState-1);
       }, 1000);
-      // const timer2 = setInterval(() => {
-      //   setTime((time) => time - 1);
-      // }, 100);
 
       return () => {
         clearTimeout(submit);
-        clearInterval(timer1);
+        clearInterval(timer);
         dispatch(entranceFeeInit());
         dispatch(balanceCheckInit());
       };
     } else {
-      push("/home");
+      history.push("/home");
     }
   }, []);
 
@@ -125,8 +138,11 @@ const Quiz = ({ push }) => {
   };
   return (
     <QuizStyle answer={answer}>
-      <TimerStyle>
-        <p>{time["1"]}</p>
+      <TimerStyle time={time}>
+        <div className='timerBar'>
+          <div/>
+        </div>
+        <p>남은 시간 <strong>{time>10? 10: time>=0 ? time : 0}초</strong></p>
       </TimerStyle>
       <div className="container">
         <p id="category">&lt;{quiz.category}&gt;</p>

@@ -64,7 +64,9 @@ const Home = (props) => {
     const isSignedIn = useSelector((state) => state.auth.status.signIn);
     const isPaid = useSelector((state) => state.quiz.status.isPaid);
     const [open, setOpen] = useState(false);
-    const [dDay] = useState(new Date(`${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}/12:00:00`));
+    const [now] = useState(new Date())
+    // const [dDay,setDDay] = useState(Math.abs(now.getTime() - new Date(`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/19:25:00`))/1000 > 600 ? new Date(`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()+1}/12:00:00`) :now);
+    const [dDay] = useState(Math.abs(now.getTime() - new Date(`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/12:00:00`))/1000 > 600 ? new Date(`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()+1}/12:00:00`) :now);
     const [date, setDate] = useState({
         hours: "0",
         minutes: "0",
@@ -88,19 +90,21 @@ const Home = (props) => {
             _minutes = _minutes < 10 ? "0" + _minutes : _minutes;
             let _seconds = Math.floor(amount % 60);
             _seconds = _seconds < 10 ? "0" + _seconds : _seconds;
-            if (amount <= 0) {
+            if (amount <= 0 && amount >= -600) {
                 setDate({
                     hours: "00",
                     minutes: "00",
                     seconds: "00",
                     isValid: true,
                 });
-            } else {
+            }
+            else {
                 setDate({
                     ...{date},
                     hours: _hours,
                     minutes: _minutes,
                     seconds: _seconds,
+                    isValid: false
                 });
             }
         }, 1000);

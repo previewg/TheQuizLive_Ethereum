@@ -1,6 +1,6 @@
 import React, { useState,  useRef } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link,useHistory } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { signInFailure, signInSuccess } from "../actions/auth";
@@ -101,7 +101,7 @@ const errorMsg = {
   upw__err: "암호가 일치하지 않습니다",
 };
 
-const SignIn = ({ push }) => {
+const SignIn = () => {
   const [user, setUser] = useState({
     uid: "",
     upw: "",
@@ -117,6 +117,7 @@ const SignIn = ({ push }) => {
   const uid = useRef();
   const upw = useRef();
 
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const onChangeHandler = (e) => {
@@ -168,7 +169,7 @@ const SignIn = ({ push }) => {
       const res = await axios.post("/auth/signIn", { ...user });
       if (res.data.success === 1) {
         dispatch(signInSuccess(res.data));
-        push("/");
+        history.push("/");
       } else if (res.data.success === 2) {
         if (res.data.code === 1) {
           setError({
