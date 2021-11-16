@@ -64,7 +64,7 @@ const Home = (props) => {
     const isSignedIn = useSelector((state) => state.auth.status.signIn);
     const isPaid = useSelector((state) => state.quiz.status.isPaid);
     const [open, setOpen] = useState(false);
-    const [dDay, setDDay] = useState(new Date("2021/11/17/16:12:40"));
+    const [dDay] = useState(new Date(`${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}/12:00:00`));
     const [date, setDate] = useState({
         hours: "0",
         minutes: "0",
@@ -111,7 +111,7 @@ const Home = (props) => {
         <HomeStyle isValid={date.isValid}>
             <div
                 className="live__img"
-                style={{backgroundImage: `url("images/TheQuizLive.png")`}}
+                style={{backgroundImage: `url("TheQuizLive.png")`}}
             />
             {!date.isValid ? (
                 <div className="time">

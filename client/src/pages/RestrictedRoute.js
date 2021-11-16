@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Switch, useHistory } from "react-router-dom";
-import { checkBtnIsClicked } from "../actions/quiz";
+import { useSelector } from "react-redux";
+import { Redirect, useHistory } from "react-router-dom";
 import React from "react";
 
 const TRUE = "SUCCESS";
@@ -21,14 +20,12 @@ const RestrictedRoute = ({
       ) : (
         <Fallback />
       );
-      break;
     case "/signUp":
       return isSignedIn !== TRUE ? (
         <Component push={history.push} />
       ) : (
         <Fallback />
       );
-      break;
     case "/quiz":
       if (isSignedIn === TRUE && isPaid === TRUE)
         return <Component push={history.push} />;
