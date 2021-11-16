@@ -69,7 +69,7 @@
 <br>
 <h3 align=center>퀴즈</h3>
 <h6 align=center >
-<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/ForReadme/quiz.webp?raw=true" alt="quiz">
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/ForReadme/quiz2.webp?raw=true" alt="quiz">
 </h6>
 
 
