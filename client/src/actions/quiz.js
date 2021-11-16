@@ -27,6 +27,7 @@ export const balanceCheckInit = () => {
   };
 };
 
+
 // The entrance fee has been paid successfully
 export const entranceFeeSuccess = () => {
   return {
