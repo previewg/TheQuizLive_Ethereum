@@ -9,8 +9,9 @@ const AboutStyle = styled.section`
   align-items: center;
 
   .layout {
-    margin-top: 200px;
+    margin-top: 120px;
     width: 50%;
+    
     .head {
       font-size: 2.5rem;
       margin-bottom: 80px;
@@ -63,7 +64,7 @@ const About = (props) => {
     const [open, setOpen] = useState(false);
     return (
       <QnAStyle open={open}>
-        <div className="active"></div>
+        <div className="active"/>
         <button className="question" onClick={() => setOpen(!open)}>
           {question}
         </button>

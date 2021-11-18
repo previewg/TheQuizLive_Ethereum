@@ -25,6 +25,12 @@ const RestrictedRoute = ({
       ) : (
         <Fallback />
       );
+    case "/info":
+      return isSignedIn === TRUE ? (
+          <Component/>
+      ) : (
+          <Fallback />
+      );
     case "/quiz":
       if (isSignedIn === TRUE && isPaid === TRUE)
         return <Component/>;

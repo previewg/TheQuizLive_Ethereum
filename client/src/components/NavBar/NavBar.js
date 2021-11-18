@@ -109,7 +109,6 @@ const NavBarStyle = styled.nav`
 
 function NavBar() {
   const dispatch = useDispatch();
-
   const isSignedIn = useSelector((state) => state.auth.status.signIn);
   const unn = useSelector((state) => state.auth.user.unn);
 

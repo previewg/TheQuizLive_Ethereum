@@ -1,40 +1,17 @@
 "use strict";
-
 const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
+const router = express.Router();
 
 // Models
 const {User} = require("../models");
 
-// liveQuiz.json
-
+// TheQuizLive.json
 const TheQuizLive = require("../build/contracts/TheQuizLive.json");
 
-// web3 Settings
-const Web3 = require("web3");
-const Accounts = require("web3-eth-accounts");
-let web3 = new Web3(Web3.givenProvider || process.env.URL);
-let accounts = new Accounts(process.env.URL);
 
-let meta;
-let rootAccount;
-
-async function init() {
-    try {
-        let result = await web3.eth.net.getId();
-        let deployedNetwork = TheQuizLive.networks[result];
-        meta = new web3.eth.Contract(TheQuizLive.abi, deployedNetwork.address);
-        let list = await web3.eth.getAccounts();
-        rootAccount = list[0];
-    } catch (err) {
-        console.error("Could not connect to contract or chain. error => " + err);
-    }
-}
-
-init();
 
 // 특수문자 제거
 const regExp = (str) => {
@@ -134,7 +111,7 @@ router.post("/signIn", async (req, res) => {
                 expiresIn: "24h",
             },
             (err, token) => {
-                res.cookie("TheLiveQuiz", token);
+                res.cookie("TheQuizLive", token);
                 res.json({
                     success: 1,
                     uid: user.uid,
@@ -153,7 +130,7 @@ router.post("/signOut", async (req, res) => {
     let store = req.sessionStore;
     try {
         await store.destroy();
-        res.clearCookie("TheLiveQuiz");
+        res.clearCookie("TheQuizLive");
         return res.json({success: 1});
     } catch (error) {
         res.status(400).json({success: 3});
@@ -166,7 +143,7 @@ router.post("/destroy", async (req, res) => {
     let store = req.sessionStore;
     try {
         await store.destroy();
-        res.clearCookie("TheLiveQuiz");
+        res.clearCookie("TheQuizLive");
         const user = await User.findOne({where: {uid}});
 
         await axios.post(`${process.env.FABRIC_URL}/auth/delete`, {
