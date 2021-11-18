@@ -64,7 +64,7 @@ const Home = (props) => {
     const isSignedIn = useSelector((state) => state.auth.status.signIn);
     const [open, setOpen] = useState(false);
     const [now] = useState(new Date())
-    const [dDay] = useState(Math.abs(now.getTime() - new Date(`${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/21:35:00`)) / 1000 > 600 ? new Date(`${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate() + 1}/12:00:00`) : now);
+    const [dDay] = useState(Math.abs(now.getTime() - new Date(`${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/17:25:00`)) / 1000 > 600 ? new Date(`${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate() + 1}/12:00:00`) : now);
     const [date, setDate] = useState({
         hours: "0",
         minutes: "0",
@@ -105,7 +105,7 @@ const Home = (props) => {
             }
         }, 1000);
         return () => clearInterval(intervalId);
-    }, [date]);
+    }, [date,dDay]);
 
     return (
         <HomeStyle isValid={date.isValid}>

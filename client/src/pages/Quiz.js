@@ -96,22 +96,25 @@ const Quiz = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    useEffect(async () => {
+    useEffect(() => {
         if (isChecked === 'SUCCESS') {
-            const res = await axios.get("/quiz/random");
-            if (res.data.success === 1) {
-                id_ref.current = res.data.quiz[0].id;
-                let data = res.data.quiz[0];
-                setQuiz({
-                    id: data.id,
-                    category: data.category,
-                    question: data.question,
-                    choice1: data.choice1,
-                    choice2: data.choice2,
-                    choice3: data.choice3,
-                    choice4: data.choice4,
-                });
+            async function randomQuiz() {
+                const res = await axios.get("/quiz/random");
+                if (res.data.success === 1) {
+                    id_ref.current = res.data.quiz[0].id;
+                    let data = res.data.quiz[0];
+                    setQuiz({
+                        id: data.id,
+                        category: data.category,
+                        question: data.question,
+                        choice1: data.choice1,
+                        choice2: data.choice2,
+                        choice3: data.choice3,
+                        choice4: data.choice4,
+                    });
+                }
             }
+            randomQuiz();
             const submit = setTimeout(async () => {
                 const res = await axios.post("/quiz/submit", {
                     id: id_ref.current,
@@ -138,7 +141,7 @@ const Quiz = () => {
         } else {
             history.push("/");
         }
-    }, []);
+    }, [isChecked]);
 
     const answerHandler = (answer) => {
         setAnswer(answer);

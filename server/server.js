@@ -24,6 +24,7 @@ let sessionStore = new mysqlStore({
     password: config.password,
     database: config.database,
 });
+
 app.use(
     session({
         key: "quiz",
@@ -53,32 +54,22 @@ models.sequelize
         process.exit();
     });
 
-// Register Routers
-const authRouter = require("./routes/auth");
-const quizRouter = require("./routes/quiz");
-
-// Use Routers
-app.use("/auth", authRouter);
-app.use("/quiz", quizRouter);
-// 404 처리
-app.use((req, res) => {
-    new Error(`${req.method} ${req.url} There is no router`);
-});
 
 // web3 Settings
 const Web3 = require("web3");
 const Accounts = require("web3-eth-accounts");
 const TheQuizLive = require("./build/contracts/TheQuizLive.json");
-const {abbr_context} = require("truffle/build/52.bundled");
-let web3 = new Web3(Web3.givenProvider || process.env.URL);
+const Tx = require("ethereumjs-tx").Transaction;
+const web3 = new Web3(Web3.givenProvider || process.env.URL);
 let accounts = new Accounts(process.env.URL);
 let meta;
 let rootAccount;
-
+let contractAddress
 async function init() {
     try {
         let result = await web3.eth.net.getId();
         let deployedNetwork = TheQuizLive.networks[result];
+        contractAddress = deployedNetwork.address
         meta = new web3.eth.Contract(TheQuizLive.abi, deployedNetwork.address);
         let list = await web3.eth.getAccounts();
         rootAccount = list[0];
@@ -88,10 +79,23 @@ async function init() {
 }
 
 init().then(() => {
+        module.exports = {rootAccount, accounts, meta, server, contractAddress,Tx,web3}
+
+        // Register Routers
+        const authRouter = require("./routes/auth");
+        const quizRouter = require("./routes/quiz");
+
+        // Use Routers
+        app.use("/auth", authRouter);
+        app.use("/quiz", quizRouter);
+
+        // 404 처리
+        app.use((req, res) => {
+            new Error(`${req.method} ${req.url} There is no router`);
+        });
         app.listen(process.env.PORT, () =>
             console.log(`Server is running on port ${process.env.PORT}`)
         );
-        module.exports = rootAccount
     }
 );
 

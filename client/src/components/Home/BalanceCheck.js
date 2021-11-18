@@ -77,12 +77,15 @@ const BalanceCheck = ({setOpen, ...props}) => {
         }
     };
 
-    useEffect(async () => {
-        const res = await axios.get("/quiz/check");
-        if (res.data.success === 1) {
-            setBalance(res.data.balance);
-            dispatch(balanceCheckSuccess());
-        } else dispatch(balanceCheckFailure());
+    useEffect(() => {
+        async function check() {
+            const res = await axios.get("/quiz/check");
+            if (res.data.success === 1) {
+                setBalance(res.data.balance);
+                dispatch(balanceCheckSuccess());
+            } else dispatch(balanceCheckFailure());
+        }
+        check();
     }, []);
 
     return (

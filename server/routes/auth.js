@@ -11,17 +11,7 @@ const {User} = require("../models");
 // TheQuizLive.json
 const TheQuizLive = require("../build/contracts/TheQuizLive.json");
 
-
-
-// 특수문자 제거
-const regExp = (str) => {
-    const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
-    if (reg.test(str)) {
-        return str.replace(reg, "");
-    } else {
-        return str;
-    }
-};
+const {meta, rootAccount, accounts,web3} = require('../server');
 
 // 회원가입
 router.post("/signUp", async (req, res) => {
@@ -155,21 +145,6 @@ router.post("/destroy", async (req, res) => {
         console.error(error);
         res.status(400).json({success: 3});
     }
-});
-
-router.get("/userInfo", (req, res) => {
-    const {uid} = req.body;
-});
-
-router.get("/list", (req, res, next) => {
-    let sql = "SELECT userid,useremail,userpbk FROM user WHERE userid!='admin'";
-    conn.query(sql, function (err, result, fields) {
-        if (!err) {
-            res.status(200).json({list: result});
-        } else {
-            res.status(400).json(err);
-        }
-    });
 });
 
 module.exports = router;
