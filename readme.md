@@ -20,40 +20,32 @@
 ## 💎 기술 스택
 
 ### Client
-- React.js
-- Redux / Redux-devTools
-- Redux-thunk
-- Axios
-- Styled Components
+    React.js | Redux | Redux-devTools | Redux-thunk | Axios | Styled Components
 
 ### Server
-- Node.js
-- Express.js
-- Sequelize
+    Node.js | Express.js | Sequelize
 
 ### DB
-- MariaDB
+    MariaDB
 
 ### Blockchain
-- Truffle
-- Ganache
-- Web3.js
+    Truffle | Ganache | Web3.js
 
 
 ## 💻 기술 특징
 
 ### Authentication
-- JWT
-- Cookie
+    JWT | Session | Cookie
 
 ### Quiz
-- Modal
-- Timer
+    Modal | Timer
 
 ### Blocks
-- Smart Contract
-- Auto distribution
+    Smart Contract | Auto distribution
 
+<br>
+
+## 🌄 구현
 <br>
 <h3 align=center>회원가입</h3>
 <h6 align=center >
@@ -72,4 +64,26 @@
 <img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/quiz.webp?raw=true" alt="quiz">
 </h6>
 
+<br>
+<h3 align=center>퀴즈 제출</h3>
+<h6 align=center >
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/finish.webp?raw=true" alt="finish">
+</h6>
 
+<br>
+<h3 align=center>안내 페이지</h3>
+<h6 align=center >
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/about.webp?raw=true" alt="about">
+</h6>
+
+<br>
+<h3 align=center>퀴즈 진행중(Pending)</h3>
+<h6 align=center >
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/pending.webp?raw=true" alt="pending">
+</h6>
+
+<br>
+<h3 align=center>퀴즈 완료(Distributed)</h3>
+<h6 align=center >
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/distributed.webp?raw=true" alt="distributed">
+</h6>
