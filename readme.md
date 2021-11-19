@@ -59,25 +59,13 @@
 </h6>
 
 <br>
-<h3 align=center>퀴즈</h3>
+<h3 align=center>퀴즈 시작</h3>
 <h6 align=center >
 <img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/quiz.webp?raw=true" alt="quiz">
 </h6>
 
 <br>
-<h3 align=center>퀴즈 제출</h3>
-<h6 align=center >
-<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/finish.webp?raw=true" alt="finish">
-</h6>
-
-<br>
-<h3 align=center>안내 페이지</h3>
-<h6 align=center >
-<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/about.webp?raw=true" alt="about">
-</h6>
-
-<br>
-<h3 align=center>퀴즈 진행중(Pending)</h3>
+<h3 align=center>퀴즈 제출(Pending)</h3>
 <h6 align=center >
 <img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/pending.webp?raw=true" alt="pending">
 </h6>
@@ -87,3 +75,10 @@
 <h6 align=center >
 <img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/distributed.webp?raw=true" alt="distributed">
 </h6>
+
+<br>
+<h3 align=center>안내 페이지</h3>
+<h6 align=center >
+<img style='width:80%' src="https://github.com/previewg/TheQuizLive_Ethereum/blob/master/forReadme/about.webp?raw=true" alt="about">
+</h6>
+
