@@ -27,11 +27,13 @@ contract TheQuizLive is Context, ERC20 {
     }
 
     function distributor() public {
-        uint256 amount = uint256(totalAmount / correctUser) + 10;
-        for (uint256 i = 0; i < userList.length; i++) {
-            if (address(userList[i]) != address(0)) {
-                transfer(userList[i], amount);
-                delete userList[i];
+        if (correctUser != 0){
+            uint256 amount = uint256(totalAmount / correctUser) + 10;
+            for (uint256 i = 0; i < userList.length; i++) {
+                if (address(userList[i]) != address(0)) {
+                    transfer(userList[i], amount);
+                    delete userList[i];
+                }
             }
         }
         correctUser = 0;
